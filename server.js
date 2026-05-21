@@ -70,14 +70,14 @@ app.get('/', (req, res) => {
 <script>
   document.addEventListener('DOMContentLoaded', function(){
     try {
-      new QRCode(document.getElementById('qrCanvas'), {
+      new QRCode(document.getElementById('qrContainer'), {
         text: '${notUrl}',
         width: 200, height: 200,
         colorDark: '#2C1810', colorLight: '#FFFFFF',
         correctLevel: QRCode.CorrectLevel.H
       });
       setTimeout(function(){
-        var el = document.querySelector('#qrCanvas canvas') || document.querySelector('#qrCanvas img');
+        var el = document.querySelector('#qrContainer canvas') || document.querySelector('#qrContainer img'); if(el){ el.style.cssText='display:block;'; }
         if(el){ el.style.cssText='width:100%;height:100%;display:block;'; }
       }, 400);
     } catch(e){ console.log(e); }
