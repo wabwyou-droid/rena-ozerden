@@ -1,4 +1,5 @@
 const express   = require('express');
+const { Pool }  = require('pg');
 const http      = require('http');
 const WebSocket = require('ws');
 const multer    = require('multer');
@@ -23,7 +24,42 @@ const upload = multer({
   }
 });
 
+// PostgreSQL bağlantısı
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  : null;
+
+// Tablo oluştur
+async function initDB() {
+  if (!pool) return;
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notlar (
+      id BIGINT PRIMARY KEY,
+      isim TEXT,
+      mesaj TEXT,
+      foto TEXT,
+      saat TEXT,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  console.log('DB hazır');
+}
+initDB();
+
+// Bellekte tutmak için (DB yoksa fallback)
 const dilekler = [];
+
+// DB'den yükle
+async function loadFromDB() {
+  if (!pool) return;
+  try {
+    const res = await pool.query('SELECT * FROM notlar ORDER BY created_at ASC');
+    dilekler.length = 0;
+    res.rows.forEach(r => dilekler.push({ id: r.id, isim: r.isim, mesaj: r.mesaj, foto: r.foto, saat: r.saat }));
+    console.log('DB yüklendi:', dilekler.length, 'not');
+  } catch(e) { console.error('DB load error:', e.message); }
+}
+loadFromDB();
 
 function broadcast(data) {
   const msg = JSON.stringify(data);
@@ -54,6 +90,13 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
     saat:  new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' })
   };
   dilekler.push(d);
+  // DB'ye kaydet
+  if (pool) {
+    pool.query(
+      'INSERT INTO notlar (id, isim, mesaj, foto, saat) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING',
+      [d.id, d.isim, d.mesaj, d.foto, d.saat]
+    ).catch(e => console.error('DB insert error:', e.message));
+  }
   broadcast({ type: 'dilek', dilek: d });
   res.json({ ok: true });
 });
@@ -230,6 +273,65 @@ document.getElementById('anotherBtn').addEventListener('click',function(){
 </script>
 </body>
 </html>`);
+});
+
+// ── ADMİN SAYFASI ──
+const ADMIN_KEY = process.env.ADMIN_KEY || 'rena2026';
+
+app.get('/admin', async (req, res) => {
+  if (req.query.key !== ADMIN_KEY) {
+    return res.send('<html><body style="font-family:sans-serif;padding:40px"><h2>Şifre gerekli</h2><form><input name="key" type="password" placeholder="Şifre"/><button>Gir</button></form></body></html>');
+  }
+  const count = dilekler.length;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body { font-family: 'Georgia', serif; background: #F9F4EE; padding: 32px 20px; max-width: 600px; margin: 0 auto; }
+  h1 { color: #7A5535; font-size: 28px; margin-bottom: 4px; }
+  .sub { color: #B89878; font-size: 13px; margin-bottom: 32px; }
+  .note { background: #fff; border: 1px solid rgba(200,168,136,.25); padding: 16px 18px; margin-bottom: 12px; border-radius: 2px; }
+  .note-name { font-weight: 600; color: #9A7050; font-size: 14px; margin-bottom: 4px; }
+  .note-msg { color: #7A5535; font-size: 15px; font-style: italic; }
+  .note-time { color: #C8A878; font-size: 11px; margin-top: 6px; }
+  .note-foto { width: 80px; height: 80px; object-fit: cover; float: right; border-radius: 2px; margin-left: 12px; }
+  .btn-clear { background: #C87060; color: #fff; border: none; padding: 14px 28px; font-size: 14px; cursor: pointer; border-radius: 2px; margin-top: 24px; }
+  .btn-clear:hover { background: #A85848; }
+  .empty { color: #C8A878; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Rena Özerden</h1>
+<div class="sub">Admin Paneli · ${count} not</div>
+
+${dilekler.length === 0 ? '<p class="empty">Henüz not yok.</p>' : dilekler.map(d => `
+  <div class="note">
+    ${d.foto ? '<img class="note-foto" src="'+d.foto+'" alt=""/>' : ''}
+    <div class="note-name">${d.isim}</div>
+    <div class="note-msg">${d.mesaj || '—'}</div>
+    <div class="note-time">${d.saat}</div>
+  </div>
+`).join('')}
+
+${dilekler.length > 0 ? `
+<form method="POST" action="/admin/clear?key=${ADMIN_KEY}" onsubmit="return confirm('Tüm notlar silinecek. Emin misin?')">
+  <button class="btn-clear" type="submit">Tüm Notları Sil (${count} not)</button>
+</form>` : ''}
+</body>
+</html>`);
+});
+
+app.post('/admin/clear', async (req, res) => {
+  if (req.query.key !== ADMIN_KEY) return res.status(403).send('Yetkisiz');
+  dilekler.length = 0;
+  if (pool) {
+    await pool.query('DELETE FROM notlar').catch(e => console.error(e.message));
+  }
+  broadcast({ type: 'clear' });
+  res.redirect('/admin?key=' + ADMIN_KEY);
 });
 
 server.listen(PORT, '0.0.0.0', () => {
