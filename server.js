@@ -73,7 +73,7 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 // ── TV EKRANI ── //
 app.get('/', async (req, res) => {
   const qr = await QRCode.toDataURL(NOT_URL, {
-    width: 200, margin: 1,
+    width: 280, margin: 2,
     color: { dark: '#9A7050', light: '#F9F4EE' }
   });
   const qrImg = `<img src="${qr}" alt="QR" style="display:block;width:100%;height:100%;">`;
@@ -339,7 +339,7 @@ body {
   border:1px solid rgba(200,168,136,.3);
   box-shadow:0 2px 12px rgba(160,120,80,.06);
 }
-.qr-frame svg { display:block; width:min(7vw,90px); height:min(7vw,90px); }
+.qr-frame svg { display:block; width:min(10vw,130px); height:min(10vw,130px); }
 .qr-lbl {
   font-family:'Cormorant Garamond',Georgia,serif;
   font-style:italic; font-weight:300;
