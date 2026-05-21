@@ -72,14 +72,13 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 
 // ── TV EKRANI ── //
 app.get('/', async (req, res) => {
-  const qr = await QRCode.toDataURL(NOT_URL, {
+  const qrDataUrl = await QRCode.toDataURL(NOT_URL, {
     width: 280, margin: 2,
-    color: { dark: '#9A7050', light: '#F9F4EE' }
+    color: { dark: '#2C1810', light: '#FFFFFF' }
   });
-  const qrImg = `<img src="${qr}" alt="QR" style="display:block;width:100%;height:100%;">`;
+  const qrImg = '<img src="' + qrDataUrl + '" alt="QR" style="display:block;width:100%;height:100%;">';
 
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.send(`<!DOCTYPE html>
+  let page = `<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -563,18 +562,7 @@ body {
         <ellipse cx="23" cy="11" rx="1.8" ry="1.4" fill="rgba(255,230,238,.5)"/>
       </svg>
       <div class="qr-frame">
-        <svg viewBox="0 0 21 21" fill="#B89060" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
-          <rect x="2" y="2" width="5" height="5" rx=".5"/>
-          <rect x="12" y="0" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
-          <rect x="14" y="2" width="5" height="5" rx=".5"/>
-          <rect x="0" y="12" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
-          <rect x="2" y="14" width="5" height="5" rx=".5"/>
-          <rect x="12" y="12" width="2" height="2"/><rect x="15" y="12" width="2" height="2"/>
-          <rect x="18" y="12" width="3" height="2"/><rect x="12" y="15" width="3" height="2"/>
-          <rect x="16" y="15" width="2" height="2"/><rect x="12" y="18" width="2" height="3"/>
-          <rect x="15" y="18" width="3" height="3"/><rect x="19" y="15" width="2" height="6"/>
-        </svg>
+__QR_PLACEHOLDER__
       </div>
     </div>
 
@@ -1045,6 +1033,12 @@ connect();
 </script>
 </body>
 </html>`);
+});
+`;
+  page = page.replace('__QR_PLACEHOLDER__', qrImg);
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(page);
 });
 
 // ── MOBİL NOT SAYFASI ──
