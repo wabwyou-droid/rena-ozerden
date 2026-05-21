@@ -22,7 +22,7 @@ const PORT   = process.env.PORT || 3000;
 
 const PUBLIC_URL = process.env.RAILWAY_PUBLIC_DOMAIN
   ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-  : process.env.PUBLIC_URL || `http://localhost:${PORT}`;
+  : process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || 'https://rena-ozerden.onrender.com';
 
 const NOT_URL = `${PUBLIC_URL}/not`;
 const dilekler = [];
@@ -73,11 +73,9 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 // ── TV EKRANI ── //
 app.get('/', async (req, res) => {
   const qr = await QRCode.toDataURL(NOT_URL, {
-    width: 180, margin: 1,
+    width: 200, margin: 1,
     color: { dark: '#9A7050', light: '#F9F4EE' }
   });
-
-  // Replace QR placeholder with real QR
   const qrImg = `<img src="${qr}" alt="QR" style="display:block;width:100%;height:100%;">`;
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -137,8 +135,8 @@ body {
 /* ── FALLING PETALS ── */
 #snow { position:absolute; inset:0; z-index:3; pointer-events:none; overflow:hidden; }
 .sp {
-  position:absolute; top:-3vw;
-  opacity:0; font-size:var(--fs);
+  position:absolute; top:-5vw;
+  opacity:0;
   animation: spFall var(--dur) ease-in-out infinite var(--del);
 }
 @keyframes spFall {
@@ -296,12 +294,13 @@ body {
 .r-main {
   font-family:'Cormorant Garamond',Georgia,serif;
   font-style:italic; font-weight:300;
-  font-size:clamp(32px,5.8vw,94px);
-  line-height:.92; color:#7A5535;
+  font-size:clamp(22px,3.8vw,62px);
+  line-height:1.1; color:#7A5535;
   letter-spacing:.02em;
   opacity:0; animation:fadeUp 2.2s ease forwards 4.1s, mainGlow 14s ease-in-out infinite 10s;
   margin-bottom:.8vw;
   text-shadow:0 2px 30px rgba(160,110,70,.12);
+  white-space:nowrap;
 }
 @keyframes mainGlow {
   0%,100% { text-shadow:0 2px 30px rgba(160,110,70,.12); }
@@ -324,20 +323,28 @@ body {
 
 /* ── QR ── */
 .qr-panel {
-  position:absolute; bottom:3.5vw; right:4vw; z-index:10;
-  display:flex; flex-direction:column; align-items:center; gap:.6vw;
+  position:absolute; bottom:2.5vw; right:3vw; z-index:10;
+  display:flex; flex-direction:column; align-items:center; gap:.4vw;
   opacity:0; animation:fadeUp 2s ease forwards 6.5s;
 }
+.qr-top-deco {
+  animation: footprintBounce 4s ease-in-out infinite;
+}
+@keyframes footprintBounce {
+  0%,100% { transform:translateY(0); }
+  50%     { transform:translateY(-2px); }
+}
 .qr-frame {
-  background:#FFFBF6; padding:5px;
+  background:#FFFBF6; padding:6px;
   border:1px solid rgba(200,168,136,.3);
   box-shadow:0 2px 12px rgba(160,120,80,.06);
 }
-.qr-frame svg { display:block; width:min(5vw,60px); height:min(5vw,60px); }
+.qr-frame svg { display:block; width:min(7vw,90px); height:min(7vw,90px); }
 .qr-lbl {
-  font-family:'Lato',sans-serif; font-weight:100;
-  font-size:clamp(5px,.6vw,8px); letter-spacing:.25em;
-  color:rgba(168,128,96,.55); text-align:center; line-height:2;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic; font-weight:300;
+  font-size:clamp(8px,.8vw,12px); letter-spacing:.08em;
+  color:rgba(168,118,96,.7); text-align:center; line-height:1.6;
 }
 
 /* ── COUNTER ── */
@@ -359,17 +366,7 @@ body {
 }
 
 /* ── DEMO BTN ── */
-.demo-btn {
-  position:absolute; bottom:3.5vw; left:50%; transform:translateX(-50%);
-  z-index:10; background:rgba(255,252,248,.85);
-  border:1px solid rgba(200,168,136,.3);
-  font-family:'Lato',sans-serif; font-weight:200;
-  font-size:clamp(7px,.7vw,10px); letter-spacing:.2em;
-  color:#A88060; padding:.5vw 1.4vw; cursor:pointer;
-  white-space:nowrap; transition:background .3s;
-  opacity:0; animation:fadeUp 2s ease forwards 7s;
-}
-.demo-btn:hover { background:rgba(255,250,244,.95); }
+
 
 /* ── TOAST ── */
 .toast {
@@ -395,6 +392,24 @@ body {
   from { opacity:0; transform:translateY(10px); }
   to   { opacity:1; transform:translateY(0); }
 }
+
+
+#footprints { position:absolute; inset:0; z-index:3; pointer-events:none; overflow:hidden; }
+.fp {
+  position:absolute;
+  font-size: clamp(14px, 1.8vw, 26px);
+  opacity:0;
+  animation: fpStep var(--dur) ease forwards var(--del);
+  transform: rotate(var(--rot));
+}
+@keyframes fpStep {
+  0%   { opacity:0;    transform:rotate(var(--rot)) scale(.6); }
+  15%  { opacity:.75;  transform:rotate(var(--rot)) scale(1); }
+  70%  { opacity:.65;  transform:rotate(var(--rot)) scale(1); }
+  100% { opacity:0;    transform:rotate(var(--rot)) scale(.8); }
+}
+
+
 
 </style>
 </head>
@@ -528,25 +543,45 @@ body {
 
     <!-- RIGHT -->
     <div class="right-col">
-      <div class="r-top" style="opacity:1;color:#7A5030;font-family:Georgia,serif;font-size:clamp(13px,1.3vw,22px);font-weight:400;letter-spacing:.2em;margin-bottom:.8vw;">Ho&#x15F; Geldin</div>
-      <div class="r-main">
-        Hoş Geldin<br>
-        Rena
-      </div>
-      <div class="r-line"></div>
-      <div class="r-sub" style="opacity:1 !important;color:#7A5535 !important;font-family:Georgia,serif;font-style:italic;font-size:clamp(12px,1.2vw,20px);line-height:2;letter-spacing:.04em;">
-        notunuzu b&#x131;rakmay&#x131;<br>l&#xFC;tfen unutmay&#x131;n&#x131;z
-      </div>
+      
+      <div class="r-main">Ho&#x15F; Geldin Rena</div>
     </div>
 
   </div>
 
-  <!-- QR -->
+  <!-- QR cute baby themed -->
   <div class="qr-panel">
-    <div class="qr-frame">
-      ${qrImg}
+
+
+    <!-- QR frame with bow on top -->
+    <div style="position:relative;">
+      <!-- Tiny bow -->
+      <svg style="position:absolute;top:-1.4vw;left:50%;transform:translateX(-50%);width:min(4vw,48px);z-index:2;" viewBox="0 0 48 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24,12 Q14,4 6,6 Q2,8 4,12 Q6,16 14,14 Q20,12 24,12Z" fill="#E8B8C8" opacity=".85"/>
+        <path d="M24,12 Q34,4 42,6 Q46,8 44,12 Q42,16 34,14 Q28,12 24,12Z" fill="#DDA8BC" opacity=".85"/>
+        <ellipse cx="24" cy="12" rx="4" ry="3.5" fill="#C8889C"/>
+        <ellipse cx="23" cy="11" rx="1.8" ry="1.4" fill="rgba(255,230,238,.5)"/>
+      </svg>
+      <div class="qr-frame">
+        <svg viewBox="0 0 21 21" fill="#B89060" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
+          <rect x="2" y="2" width="5" height="5" rx=".5"/>
+          <rect x="12" y="0" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
+          <rect x="14" y="2" width="5" height="5" rx=".5"/>
+          <rect x="0" y="12" width="9" height="9" rx="1" fill="none" stroke="#B89060" stroke-width="1"/>
+          <rect x="2" y="14" width="5" height="5" rx=".5"/>
+          <rect x="12" y="12" width="2" height="2"/><rect x="15" y="12" width="2" height="2"/>
+          <rect x="18" y="12" width="3" height="2"/><rect x="12" y="15" width="3" height="2"/>
+          <rect x="16" y="15" width="2" height="2"/><rect x="12" y="18" width="2" height="3"/>
+          <rect x="15" y="18" width="3" height="3"/><rect x="19" y="15" width="2" height="6"/>
+        </svg>
+      </div>
     </div>
-    <div class="qr-lbl">Not bırak ♡</div>
+
+    <!-- Bottom label -->
+    <div class="qr-lbl">
+      Rena'ya not bırak ♡
+    </div>
   </div>
 
   <div class="counter">
@@ -554,26 +589,86 @@ body {
     <div class="ctxt" id="ct">0 not</div>
   </div>
 
-  <button class="demo-btn" id="demoBtn">+ Demo not ekle</button>
 </div>
 
 <script>
-// ── FALLING PETALS ──
+// ── FALLING ITEMS: emzik + biberon + küçük çiçek ──
 (function(){
-  var s=document.getElementById('snow');
-  var items=['🌸','🌷','✿','❀','·','∘','⋅'];
-  for(var i=0;i<28;i++){
-    var el=document.createElement('div'); el.className='sp';
-    var sz=(.5+Math.random()*.9);
-    el.style.cssText=
-      'left:'+(Math.random()*105-2)+'%;'+
-      '--fs:'+(sz*1.3)+'vw;'+
-      '--dur:'+(11+Math.random()*14)+'s;'+
-      '--del:-'+(Math.random()*20)+'s;'+
-      '--op:'+(0.2+Math.random()*.4)+';'+
-      '--spin:'+((Math.random()-.5)*300)+'deg;'+
-      '--sway:'+((Math.random()-.5)*6)+'vw;';
-    el.textContent=items[i%items.length];
+  var s = document.getElementById('snow');
+
+  // Pacifier SVG
+  function pacifierSVG(size, op) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="'+size+'" height="'+size+'" style="display:block;">' +
+      // Shield / guard
+      '<ellipse cx="20" cy="22" rx="14" ry="10" fill="rgba(232,180,190,'+op+')" />' +
+      '<ellipse cx="20" cy="22" rx="14" ry="10" fill="none" stroke="rgba(210,150,160,'+op+')" stroke-width="1"/>' +
+      // Button holes
+      '<circle cx="15" cy="22" r="2" fill="rgba(255,245,245,0.6)"/>' +
+      '<circle cx="25" cy="22" r="2" fill="rgba(255,245,245,0.6)"/>' +
+      // Nipple
+      '<ellipse cx="20" cy="12" rx="4.5" ry="6" fill="rgba(220,160,150,'+op*1.1+')" />' +
+      // Ring
+      '<circle cx="20" cy="33" r="4" fill="none" stroke="rgba(210,150,160,'+op+')" stroke-width="1.8"/>' +
+      '</svg>';
+  }
+
+  // Baby bottle SVG
+  function bottleSVG(size, op) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 42" width="'+Math.round(size*.6)+'" height="'+size+'" style="display:block;">' +
+      // Nipple tip
+      '<ellipse cx="12" cy="4"  rx="3"   ry="3.5" fill="rgba(200,160,140,'+op+')" />' +
+      // Collar
+      '<rect x="8" y="6" width="8" height="4" rx="2" fill="rgba(220,175,165,'+op+')" />' +
+      // Bottle body
+      '<path d="M7,10 C4,12 3,15 3,20 L3,34 C3,37 5,39 12,39 C19,39 21,37 21,34 L21,20 C21,15 20,12 17,10 Z" fill="rgba(245,225,225,'+op*0.85+')" />' +
+      '<path d="M7,10 C4,12 3,15 3,20 L3,34 C3,37 5,39 12,39 C19,39 21,37 21,34 L21,20 C21,15 20,12 17,10 Z" fill="none" stroke="rgba(210,170,165,'+op+')" stroke-width="1"/>' +
+      // Milk level
+      '<path d="M4,28 C4,28 8,26 12,27 C16,28 20,26 20,26 L20,34 C20,37 17,38 12,38 C7,38 4,37 4,34 Z" fill="rgba(255,240,240,'+op*0.7+')" />' +
+      // Measurement lines
+      '<line x1="5" y1="20" x2="8"  y2="20" stroke="rgba(200,160,155,'+op*0.5+')" stroke-width=".7"/>' +
+      '<line x1="5" y1="24" x2="8"  y2="24" stroke="rgba(200,160,155,'+op*0.5+')" stroke-width=".7"/>' +
+      '<line x1="5" y1="28" x2="8"  y2="28" stroke="rgba(200,160,155,'+op*0.5+')" stroke-width=".7"/>' +
+      '</svg>';
+  }
+
+  // Small flower (kept for variety)
+  function flowerSVG(size, op) {
+    var c = 'rgba(210,175,165,'+op+')';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="'+size+'" height="'+size+'" style="display:block;">' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(0,10,10)"/>' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(60,10,10)"/>' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(120,10,10)"/>' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(180,10,10)"/>' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(240,10,10)"/>' +
+      '<ellipse cx="10" cy="4"  rx="3" ry="4.5" fill="'+c+'" transform="rotate(300,10,10)"/>' +
+      '<circle cx="10" cy="10" r="3.5" fill="rgba(245,225,215,'+op+')" />' +
+      '</svg>';
+  }
+
+  var types = ['pacifier','bottle','flower','pacifier','bottle','flower','pacifier'];
+
+  for (var i = 0; i < 26; i++) {
+    var el  = document.createElement('div');
+    el.className = 'sp';
+    var type = types[i % types.length];
+    var sz   = 9 + Math.random() * 7;
+    var op   = (0.25 + Math.random() * 0.3).toFixed(2);
+    var dur  = 11 + Math.random() * 14;
+    var del  = -(Math.random() * 20);
+    var spin = (Math.random() - .5) * 280;
+    var sway = (Math.random() - .5) * 6;
+
+    var inner = type === 'pacifier' ? pacifierSVG(sz, op) :
+                type === 'bottle'   ? bottleSVG(sz, op)   : flowerSVG(sz, op);
+
+    el.innerHTML = inner;
+    el.style.cssText =
+      'left:' + (Math.random() * 105 - 2) + '%;' +
+      '--dur:' + dur + 's;' +
+      '--del:' + del + 's;' +
+      '--op:1;' +
+      '--spin:' + spin + 'deg;' +
+      '--sway:' + sway + 'vw;';
     s.appendChild(el);
   }
 })();
@@ -612,7 +707,7 @@ function bloom(x,y){
   setTimeout(function(){if(b.parentNode)b.remove();},1800);
 }
 document.getElementById('canvas').addEventListener('click',function(e){
-  if(e.target.closest('#demoBtn')) return;
+
   var c=document.getElementById('canvas'),r=c.getBoundingClientRect();
   bloom((e.clientX-r.left)*(c.offsetWidth/r.width),(e.clientY-r.top)*(c.offsetHeight/r.height));
 });
@@ -641,7 +736,7 @@ function spawnNote(isim,mesaj,foto){
 
 // ── DEMO ──
 var demos=[
-  {isim:'Ayşe Hanım',   mesaj:'Rena\'ya uzun ve sağlıklı bir ömür diliyorum 🌸'},
+  {isim:'Ayşe Hanım',   mesaj:'Rena\\'ya uzun ve sağlıklı bir ömür diliyorum 🌸'},
   {isim:'Mehmet Bey',   mesaj:'Hoş geldin dünyaya küçük prenses!'},
   {isim:'Zeynep & Can', mesaj:'Sen bizim en büyük sevincimizsin ♡'},
   {isim:'Selin',        mesaj:'Yüzün hep gülsün canım Rena'},
@@ -654,6 +749,8 @@ document.getElementById('demoBtn').addEventListener('click',function(e){
   spawnNote(n.isim,n.mesaj,null);
 });
 
+
+
 // Force all visible after 400ms
 setTimeout(function(){
   var sel='.title-rena,.title-ozerden,.title-year,.r-top,.r-main,.r-sub,.r-line,.flower-wrap,.left-col,.qr-panel,.counter,.demo-btn,.div-v';
@@ -662,112 +759,271 @@ setTimeout(function(){
     el.style.transform='translateY(0)';
   });
 },400);
+
+
+
+</script>
+
+<!-- FOOTPRINT OVERLAY - fixed, outside canvas -->
+<div id="fp-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;"></div>
+
+<script>
+(function() {
+  function foot(flip) {
+    var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 32 36');
+    s.setAttribute('width','12');
+    s.setAttribute('height','13');
+    var ns = 'http://www.w3.org/2000/svg';
+    var g = document.createElementNS(ns,'g');
+    if(flip) g.setAttribute('transform','scale(-1,1) translate(-32,0)');
+
+    // Palm — chubby baby palm shape
+    var palm = document.createElementNS(ns,'path');
+    palm.setAttribute('d',
+      'M6,32 C2,31 1,27 2,23 C3,19 4,17 5,15 ' +
+      'C6,13 7,12 9,12 C11,12 13,12 15,13 ' +
+      'C17,12 19,12 21,13 C23,12 25,13 26,15 ' +
+      'C27,17 28,19 28,23 C29,27 28,31 25,32 Z'
+    );
+    palm.setAttribute('fill','#C8A090');
+    palm.setAttribute('opacity','0.42');
+    g.appendChild(palm);
+
+    // Palm crease line
+    var crease = document.createElementNS(ns,'path');
+    crease.setAttribute('d','M5,22 C10,20 18,20 27,22');
+    crease.setAttribute('stroke','#B08070');
+    crease.setAttribute('stroke-width','0.7');
+    crease.setAttribute('fill','none');
+    crease.setAttribute('opacity','0.18');
+    g.appendChild(crease);
+
+    // Fingers — 4 chubby baby fingers (thumb hidden when crawling)
+    var fingers = [
+      {cx:7,  cy:8,  rx:2.8, ry:3.2},
+      {cx:12, cy:6,  rx:2.6, ry:3.4},
+      {cx:18, cy:6,  rx:2.6, ry:3.4},
+      {cx:23, cy:7.5,rx:2.4, ry:3.1},
+    ];
+    fingers.forEach(function(f) {
+      // Finger body
+      var e = document.createElementNS(ns,'ellipse');
+      e.setAttribute('cx', f.cx); e.setAttribute('cy', f.cy);
+      e.setAttribute('rx', f.rx); e.setAttribute('ry', f.ry);
+      e.setAttribute('fill','#C8A090');
+      e.setAttribute('opacity','0.40');
+      g.appendChild(e);
+      // Knuckle crease
+      var k = document.createElementNS(ns,'path');
+      k.setAttribute('d','M'+(f.cx-f.rx*.6)+','+(f.cy+f.ry*.2)+' Q'+f.cx+','+(f.cy+f.ry*.4)+' '+(f.cx+f.rx*.6)+','+(f.cy+f.ry*.2));
+      k.setAttribute('stroke','#B08070');
+      k.setAttribute('stroke-width','0.5');
+      k.setAttribute('fill','none');
+      k.setAttribute('opacity','0.2');
+      g.appendChild(k);
+      // Tiny nail
+      var n = document.createElementNS(ns,'ellipse');
+      n.setAttribute('cx', f.cx); n.setAttribute('cy', f.cy - f.ry*0.55);
+      n.setAttribute('rx', f.rx*0.6); n.setAttribute('ry', f.ry*0.28);
+      n.setAttribute('fill','rgba(255,240,235,0.4)');
+      g.appendChild(n);
+    });
+
+    // Thumb — peeking from side
+    var thumb = document.createElementNS(ns,'ellipse');
+    thumb.setAttribute('cx','3'); thumb.setAttribute('cy','18');
+    thumb.setAttribute('rx','2.2'); thumb.setAttribute('ry','3.5');
+    thumb.setAttribute('fill','#C8A090');
+    thumb.setAttribute('opacity','0.35');
+    thumb.setAttribute('transform','rotate(-25,3,18)');
+    g.appendChild(thumb);
+
+    s.appendChild(g);
+    return s;
+  }
+
+  function walk() {
+    var ov = document.getElementById('fp-overlay');
+    var W  = window.innerWidth;
+    var H  = window.innerHeight;
+
+    // Start position and direction
+    var sx  = 0.08 + Math.random() * 0.78;
+    var sy  = 0.12 + Math.random() * 0.68;
+    var ang = (-15 + Math.random() * 30) * Math.PI / 180;
+    var stride = 0.05 + Math.random() * 0.02;
+
+    for (var i = 0; i < 5; i++) {
+      (function(idx) {
+        var right = idx % 2 === 0;
+        var perp  = ang + Math.PI / 2;
+        var lat   = right ? 0.022 : -0.022;
+        var px    = (sx + Math.cos(ang) * stride * idx + Math.cos(perp) * lat) * W;
+        var py    = (sy + Math.sin(ang) * stride * idx + Math.sin(perp) * lat) * H;
+        var rot   = (ang * 180 / Math.PI) + (right ? 8 : -8);
+
+        setTimeout(function() {
+          var wrap = document.createElement('div');
+          wrap.style.cssText =
+            'position:absolute;' +
+            'left:' + px + 'px;' +
+            'top:'  + py + 'px;' +
+            'transform:rotate(' + rot + 'deg);' +
+            'opacity:0;' +
+            'transition:opacity 0.5s ease;';
+          wrap.appendChild(foot(!right));
+          ov.appendChild(wrap);
+
+          requestAnimationFrame(function(){ requestAnimationFrame(function(){
+            wrap.style.opacity = '0.65';
+          }); });
+
+          setTimeout(function(){
+            wrap.style.transition = 'opacity 1.8s ease';
+            wrap.style.opacity = '0';
+            setTimeout(function(){ if(wrap.parentNode) wrap.remove(); }, 1900);
+          }, 3500);
+
+        }, idx * 400);
+      })(i);
+    }
+  }
+
+  setTimeout(function(){
+    walk();
+    setInterval(walk, 5000 + Math.random() * 3000);
+  }, 1500);
+})();
 </script>
 <script>
-// ── FALLING PETALS ──
-(function(){
-  var s=document.getElementById('snow');
-  var items=['🌸','🌷','✿','❀','·','∘','⋅'];
-  for(var i=0;i<28;i++){
-    var el=document.createElement('div'); el.className='sp';
-    var sz=(.5+Math.random()*.9);
-    el.style.cssText=
-      'left:'+(Math.random()*105-2)+'%;'+
-      '--fs:'+(sz*1.3)+'vw;'+
-      '--dur:'+(11+Math.random()*14)+'s;'+
-      '--del:-'+(Math.random()*20)+'s;'+
-      '--op:'+(0.2+Math.random()*.4)+';'+
-      '--spin:'+((Math.random()-.5)*300)+'deg;'+
-      '--sway:'+((Math.random()-.5)*6)+'vw;';
-    el.textContent=items[i%items.length];
-    s.appendChild(el);
+(function() {
+  function foot(flip) {
+    var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 32 36');
+    s.setAttribute('width','12');
+    s.setAttribute('height','13');
+    var ns = 'http://www.w3.org/2000/svg';
+    var g = document.createElementNS(ns,'g');
+    if(flip) g.setAttribute('transform','scale(-1,1) translate(-32,0)');
+
+    // Palm — chubby baby palm shape
+    var palm = document.createElementNS(ns,'path');
+    palm.setAttribute('d',
+      'M6,32 C2,31 1,27 2,23 C3,19 4,17 5,15 ' +
+      'C6,13 7,12 9,12 C11,12 13,12 15,13 ' +
+      'C17,12 19,12 21,13 C23,12 25,13 26,15 ' +
+      'C27,17 28,19 28,23 C29,27 28,31 25,32 Z'
+    );
+    palm.setAttribute('fill','#C8A090');
+    palm.setAttribute('opacity','0.42');
+    g.appendChild(palm);
+
+    // Palm crease line
+    var crease = document.createElementNS(ns,'path');
+    crease.setAttribute('d','M5,22 C10,20 18,20 27,22');
+    crease.setAttribute('stroke','#B08070');
+    crease.setAttribute('stroke-width','0.7');
+    crease.setAttribute('fill','none');
+    crease.setAttribute('opacity','0.18');
+    g.appendChild(crease);
+
+    // Fingers — 4 chubby baby fingers (thumb hidden when crawling)
+    var fingers = [
+      {cx:7,  cy:8,  rx:2.8, ry:3.2},
+      {cx:12, cy:6,  rx:2.6, ry:3.4},
+      {cx:18, cy:6,  rx:2.6, ry:3.4},
+      {cx:23, cy:7.5,rx:2.4, ry:3.1},
+    ];
+    fingers.forEach(function(f) {
+      // Finger body
+      var e = document.createElementNS(ns,'ellipse');
+      e.setAttribute('cx', f.cx); e.setAttribute('cy', f.cy);
+      e.setAttribute('rx', f.rx); e.setAttribute('ry', f.ry);
+      e.setAttribute('fill','#C8A090');
+      e.setAttribute('opacity','0.40');
+      g.appendChild(e);
+      // Knuckle crease
+      var k = document.createElementNS(ns,'path');
+      k.setAttribute('d','M'+(f.cx-f.rx*.6)+','+(f.cy+f.ry*.2)+' Q'+f.cx+','+(f.cy+f.ry*.4)+' '+(f.cx+f.rx*.6)+','+(f.cy+f.ry*.2));
+      k.setAttribute('stroke','#B08070');
+      k.setAttribute('stroke-width','0.5');
+      k.setAttribute('fill','none');
+      k.setAttribute('opacity','0.2');
+      g.appendChild(k);
+      // Tiny nail
+      var n = document.createElementNS(ns,'ellipse');
+      n.setAttribute('cx', f.cx); n.setAttribute('cy', f.cy - f.ry*0.55);
+      n.setAttribute('rx', f.rx*0.6); n.setAttribute('ry', f.ry*0.28);
+      n.setAttribute('fill','rgba(255,240,235,0.4)');
+      g.appendChild(n);
+    });
+
+    // Thumb — peeking from side
+    var thumb = document.createElementNS(ns,'ellipse');
+    thumb.setAttribute('cx','3'); thumb.setAttribute('cy','18');
+    thumb.setAttribute('rx','2.2'); thumb.setAttribute('ry','3.5');
+    thumb.setAttribute('fill','#C8A090');
+    thumb.setAttribute('opacity','0.35');
+    thumb.setAttribute('transform','rotate(-25,3,18)');
+    g.appendChild(thumb);
+
+    s.appendChild(g);
+    return s;
   }
+
+  function walk() {
+    var ov = document.getElementById('fp-overlay');
+    var W  = window.innerWidth;
+    var H  = window.innerHeight;
+
+    // Start position and direction
+    var sx  = 0.08 + Math.random() * 0.78;
+    var sy  = 0.12 + Math.random() * 0.68;
+    var ang = (-15 + Math.random() * 30) * Math.PI / 180;
+    var stride = 0.05 + Math.random() * 0.02;
+
+    for (var i = 0; i < 5; i++) {
+      (function(idx) {
+        var right = idx % 2 === 0;
+        var perp  = ang + Math.PI / 2;
+        var lat   = right ? 0.022 : -0.022;
+        var px    = (sx + Math.cos(ang) * stride * idx + Math.cos(perp) * lat) * W;
+        var py    = (sy + Math.sin(ang) * stride * idx + Math.sin(perp) * lat) * H;
+        var rot   = (ang * 180 / Math.PI) + (right ? 8 : -8);
+
+        setTimeout(function() {
+          var wrap = document.createElement('div');
+          wrap.style.cssText =
+            'position:absolute;' +
+            'left:' + px + 'px;' +
+            'top:'  + py + 'px;' +
+            'transform:rotate(' + rot + 'deg);' +
+            'opacity:0;' +
+            'transition:opacity 0.5s ease;';
+          wrap.appendChild(foot(!right));
+          ov.appendChild(wrap);
+
+          requestAnimationFrame(function(){ requestAnimationFrame(function(){
+            wrap.style.opacity = '0.65';
+          }); });
+
+          setTimeout(function(){
+            wrap.style.transition = 'opacity 1.8s ease';
+            wrap.style.opacity = '0';
+            setTimeout(function(){ if(wrap.parentNode) wrap.remove(); }, 1900);
+          }, 3500);
+
+        }, idx * 400);
+      })(i);
+    }
+  }
+
+  setTimeout(function(){
+    walk();
+    setInterval(walk, 5000 + Math.random() * 3000);
+  }, 1500);
 })();
-
-// ── SPARKLES ──
-(function(){
-  var sp=document.getElementById('sparkles');
-  for(var i=0;i<18;i++){
-    var el=document.createElement('div'); el.className='sparkle';
-    var sz=.3+Math.random()*.7;
-    el.style.cssText=
-      'left:'+(5+Math.random()*90)+'%;top:'+(5+Math.random()*90)+'%;'+
-      '--dur:'+(3+Math.random()*4)+'s;'+
-      '--del:-'+(Math.random()*6)+'s;'+
-      '--op:'+(0.3+Math.random()*.4)+';';
-    el.innerHTML='<svg width="'+(sz*12)+'px" height="'+(sz*12)+'px" viewBox="0 0 12 12"><path d="M6 0L6.8 5.2L12 6L6.8 6.8L6 12L5.2 6.8L0 6L5.2 5.2Z" fill="rgba(190,155,110,'+(0.35+Math.random()*.3)+')"/></svg>';
-    sp.appendChild(el);
-  }
-})();
-
-// ── CLICK BLOOM ──
-var COLS=['#F2C8C8','#E8B0B8','#F8D8D8','#EEC0C4','#DDA8A8','#F5E0E0'];
-function bloom(x,y){
-  var b=document.createElement('div');b.className='burst';
-  b.style.cssText='position:absolute;left:'+x+'px;top:'+y+'px;';
-  for(var i=0;i<16;i++){
-    var p=document.createElement('div');p.className='petal';
-    var ang=(Math.PI*2/16)*i,dist=25+Math.random()*30,s=4+Math.random()*5;
-    p.style.cssText='width:'+s+'px;height:'+s+'px;background:'+COLS[i%6]+';left:0;top:0;'+
-      '--tx:'+(Math.cos(ang)*dist)+'px;--ty:'+(Math.sin(ang)*dist)+'px;'+
-      '--dur:'+(1+Math.random()*.5)+'s;'+
-      'animation-delay:'+(Math.random()*.08)+'s;';
-    b.appendChild(p);
-  }
-  document.getElementById('petals').appendChild(b);
-  setTimeout(function(){if(b.parentNode)b.remove();},1800);
-}
-document.getElementById('canvas').addEventListener('click',function(e){
-  if(e.target.closest('#demoBtn')) return;
-  var c=document.getElementById('canvas'),r=c.getBoundingClientRect();
-  bloom((e.clientX-r.left)*(c.offsetWidth/r.width),(e.clientY-r.top)*(c.offsetHeight/r.height));
-});
-
-// ── NOTES ──
-var count=0;
-function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function spawnNote(isim,mesaj,foto){
-  var el=document.createElement('div');el.className='nc';
-  var side=Math.random()>.5,left=side?54+Math.random()*26:4+Math.random()*20,top=10+Math.random()*62;
-  var rot=(Math.random()-.5)*3.5;
-  el.style.cssText='left:'+left+'%;top:'+top+'%;--r:'+rot+'deg;'+
-    '--x1:'+((Math.random()-.5)*14)+'px;--y1:'+((Math.random()-.5)*12)+'px;'+
-    '--x2:'+((Math.random()-.5)*12)+'px;--y2:'+((Math.random()-.5)*15)+'px;'+
-    '--dd:'+(15+Math.random()*11).toFixed(1)+'s;';
-  var fHtml=foto?'<img class="nc-foto" src="'+foto+'" alt=""/>':'';
-  el.innerHTML=fHtml+'<div class="nc-name">'+esc(isim)+'</div><div class="nc-msg">'+esc(mesaj)+'</div><div class="nc-heart">♡</div>';
-  document.getElementById('notes').appendChild(el);
-  count++; document.getElementById('ct').textContent=count+' not';
-  var t=document.createElement('div');t.className='toast';
-  t.textContent=isim+' bir not bıraktı ♡';
-  document.getElementById('canvas').appendChild(t);
-  setTimeout(function(){if(t.parentNode)t.remove();},4200);
-  var c=document.getElementById('canvas');bloom(c.offsetWidth*.7,c.offsetHeight*.44);
-}
-
-// ── DEMO ──
-var demos=[
-  {isim:'Ayşe Hanım',   mesaj:'Rena\'ya uzun ve sağlıklı bir ömür diliyorum 🌸'},
-  {isim:'Mehmet Bey',   mesaj:'Hoş geldin dünyaya küçük prenses!'},
-  {isim:'Zeynep & Can', mesaj:'Sen bizim en büyük sevincimizsin ♡'},
-  {isim:'Selin',        mesaj:'Yüzün hep gülsün canım Rena'},
-  {isim:'Büyükanne',    mesaj:'Torunum, gözümün nuru. Hoş geldin!'},
-];
-var di=0;
-document.getElementById('demoBtn').addEventListener('click',function(e){
-  e.stopPropagation();
-  var n=demos[di%demos.length]; di++;
-  spawnNote(n.isim,n.mesaj,null);
-});
-
-// Force all visible after 400ms
-setTimeout(function(){
-  var sel='.title-rena,.title-ozerden,.title-year,.r-top,.r-main,.r-sub,.r-line,.flower-wrap,.left-col,.qr-panel,.counter,.demo-btn,.div-v';
-  document.querySelectorAll(sel).forEach(function(el){
-    el.style.opacity='1';
-    el.style.transform='translateY(0)';
-  });
-},400);
 
 // WebSocket — auto reconnect
 function connect(){
