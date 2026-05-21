@@ -1047,7 +1047,7 @@ connect();
 </html>`);
 });
 
-// ── MOBİL NOT SAYFASI ── //
+// ── MOBİL NOT SAYFASI ──
 app.get('/not', (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(`<!DOCTYPE html>
@@ -1055,106 +1055,160 @@ app.get('/not', (req, res) => {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Rena'ya Not Bırak ♡</title>
+<meta name="color-scheme" content="light only">
+<title>Rena'ya Not Bırak</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@100;200;300;400&family=Great+Vibes&display=swap');
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;min-height:100%;background:#FDE8EE;}
-body{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;padding:28px 20px;
-  background-color:#FDE8EE;
-  background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 29px,rgba(220,150,170,.25) 29px,rgba(220,150,170,.25) 30px),
-    repeating-linear-gradient(90deg,transparent,transparent 29px,rgba(220,150,170,.25) 29px,rgba(220,150,170,.25) 30px);
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@200;300;400&display=swap');
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; min-height:100%;
+  background:#F9F4EE;
+  color-scheme: light only;
 }
-.card{
-  width:100%;max-width:400px;
-  background:linear-gradient(160deg,#FFF9F6 0%,#FFF0F3 100%);
-  border:1.5px solid rgba(232,160,176,.35);
-  padding:36px 28px 32px;text-align:center;
-  box-shadow:0 8px 40px rgba(200,104,126,.1);
+body {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  min-height:100vh; padding:32px 20px;
+  font-family:'Cormorant Garamond', Georgia, serif;
 }
-/* Bow top */
-.bow{font-size:48px;margin-bottom:-8px;display:block;animation:bowBounce 4s ease-in-out infinite;}
-@keyframes bowBounce{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
-.logo{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:44px;color:#C8687E;letter-spacing:.1em;margin-bottom:2px;}
-.logo-ya{font-family:'Great Vibes',cursive;font-size:22px;color:#D4849A;display:block;margin-bottom:4px;}
-.sub{font-family:'Lato',sans-serif;font-weight:200;font-size:11px;letter-spacing:.3em;color:#D4849A;margin-bottom:28px;}
-.rule{width:50px;height:1.5px;background:linear-gradient(to right,transparent,#E8A0B0,transparent);margin:0 auto 28px;}
+.card {
+  width:100%; max-width:400px;
+  background:linear-gradient(160deg,#FFFBF6 0%,#FFF6EE 100%);
+  border:1px solid rgba(200,168,136,.25);
+  padding:38px 28px 34px;
+  text-align:center;
+  box-shadow:0 8px 40px rgba(160,120,80,.08);
+}
+.logo {
+  font-family:'Cormorant Garamond', Georgia, serif;
+  font-style:italic; font-weight:300;
+  font-size:46px; color:#7A5535;
+  letter-spacing:.14em; margin-bottom:2px;
+  display:block;
+}
+.logo-sub {
+  font-family:'Cormorant Garamond', Georgia, serif;
+  font-style:italic; font-weight:300;
+  font-size:18px; color:#9A7050;
+  letter-spacing:.18em; margin-bottom:6px;
+  display:block;
+}
+.year {
+  font-family:'Lato', sans-serif; font-weight:200;
+  font-size:11px; letter-spacing:.5em;
+  color:#B89878; margin-bottom:28px; display:block;
+}
+.rule {
+  width:50px; height:1px;
+  background:linear-gradient(to right,transparent,#C8A878,transparent);
+  margin:0 auto 28px;
+}
+label {
+  display:block; text-align:left;
+  font-family:'Lato', sans-serif; font-weight:300;
+  font-size:13px; letter-spacing:.08em;
+  color:#8A6040; margin-bottom:8px;
+}
+input, textarea {
+  display:block; width:100%;
+  background:transparent; border:none;
+  border-bottom:1.5px solid rgba(200,168,136,.4);
+  font-family:'Cormorant Garamond', Georgia, serif;
+  font-weight:400; font-size:20px; color:#5A3820;
+  padding:10px 4px; outline:none;
+  transition:border-color .3s;
+  margin-bottom:24px; resize:none;
+  -webkit-appearance:none; border-radius:0;
+}
+input::placeholder, textarea::placeholder {
+  color:rgba(160,120,80,.35);
+  font-style:italic; font-size:18px;
+}
+input:focus, textarea:focus { border-color:#C8A878; }
 
-label{display:block;text-align:left;font-family:'Lato',sans-serif;font-weight:300;font-size:12px;letter-spacing:.08em;color:#C8687E;margin-bottom:8px;}
-input,textarea{
-  width:100%;background:transparent;border:none;
-  border-bottom:1.5px solid rgba(232,160,176,.4);
-  font-family:'Cormorant Garamond',serif;font-weight:400;
-  font-size:20px;color:#7A3040;
-  padding:10px 4px;outline:none;
-  transition:border-color .3s;margin-bottom:24px;
-  resize:none;-webkit-appearance:none;border-radius:0;
-}
-input::placeholder,textarea::placeholder{color:rgba(200,104,126,.35);font-style:italic;font-size:18px;}
-input:focus,textarea:focus{border-color:#E8A0B0;}
-.btn{
-  width:100%;padding:16px;
-  background:linear-gradient(135deg,#E8A0B0,#C8687E);
-  border:none;font-family:'Lato',sans-serif;font-weight:300;
-  font-size:14px;letter-spacing:.12em;
-  color:#fff;cursor:pointer;
-  transition:all .3s;-webkit-appearance:none;border-radius:0;
-}
-.btn:active,.btn:hover{background:linear-gradient(135deg,#D4849A,#B85870);}
-.btn:disabled{opacity:.5;cursor:not-allowed;}
-.err{font-family:'Lato',sans-serif;font-size:12px;color:#C87070;margin-top:-16px;margin-bottom:16px;display:none;text-align:left;}
-.success{display:none;padding:16px 0;}
-.s-icon{font-size:52px;margin-bottom:16px;animation:pop .6s cubic-bezier(.22,1,.36,1);}
-@keyframes pop{0%{transform:scale(0);}100%{transform:scale(1);}}
-.s-title{font-family:'Great Vibes',cursive;font-size:38px;color:#C8687E;margin-bottom:8px;}
-.s-sub{font-family:'Lato',sans-serif;font-weight:200;font-size:12px;letter-spacing:.2em;color:#D4849A;}
-.foto-area{
+.foto-area {
   width:100%; aspect-ratio:4/3;
-  border:1.5px dashed rgba(232,160,176,.5);
+  border:1.5px dashed rgba(200,168,136,.4);
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; margin-bottom:24px; overflow:hidden;
-  transition:border-color .3s; background:rgba(255,245,248,.5);
-  position:relative;
+  background:rgba(255,250,244,.6); position:relative;
+  border-radius:2px;
 }
-.foto-area:active{ border-color:#E8A0B0; }
-.foto-placeholder{ text-align:center; }
-.foto-hint{
-  font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
-  font-size:12px; font-weight:300; letter-spacing:.05em;
-  color:rgba(200,104,126,.5); margin-top:6px;
+.foto-hint {
+  font-family:'Lato', sans-serif; font-weight:200;
+  font-size:12px; letter-spacing:.06em;
+  color:rgba(160,120,80,.5); margin-top:8px;
+  text-align:center;
 }
-.foto-preview{
+.foto-icon { font-size:28px; }
+.foto-preview {
   width:100%; height:100%; object-fit:cover;
-  position:absolute; inset:0;
+  position:absolute; inset:0; display:none;
 }
-.again{margin-top:28px;background:transparent;border:1.5px solid rgba(232,160,176,.4);font-family:'Lato',sans-serif;font-weight:300;font-size:12px;letter-spacing:.08em;color:#C8687E;padding:12px 24px;cursor:pointer;-webkit-appearance:none;border-radius:0;}
+
+.btn {
+  display:block; width:100%; padding:16px;
+  background:linear-gradient(135deg,#D4A878,#A87850);
+  border:none;
+  font-family:'Lato', sans-serif; font-weight:300;
+  font-size:14px; letter-spacing:.15em;
+  color:#fff; cursor:pointer;
+  transition:opacity .3s;
+  -webkit-appearance:none; border-radius:0;
+}
+.btn:active { opacity:.85; }
+.btn:disabled { opacity:.5; }
+
+.err {
+  font-family:'Lato', sans-serif; font-size:12px;
+  color:#C07060; margin-top:-16px; margin-bottom:16px;
+  display:none; text-align:left; letter-spacing:.03em;
+}
+
+.success { display:none; padding:16px 0; }
+.s-icon { font-size:52px; margin-bottom:16px; display:block; animation:pop .6s cubic-bezier(.22,1,.36,1); }
+@keyframes pop { 0%{transform:scale(0);}100%{transform:scale(1);} }
+.s-title {
+  font-family:'Cormorant Garamond', Georgia, serif;
+  font-style:italic; font-weight:300;
+  font-size:34px; color:#7A5535; margin-bottom:8px;
+  letter-spacing:.05em;
+}
+.s-sub {
+  font-family:'Lato', sans-serif; font-weight:200;
+  font-size:12px; letter-spacing:.25em; color:#B89878;
+}
+.again {
+  margin-top:26px; background:transparent;
+  border:1px solid rgba(200,168,136,.35);
+  font-family:'Lato', sans-serif; font-weight:300;
+  font-size:13px; letter-spacing:.08em;
+  color:#9A7050; padding:12px 24px; cursor:pointer;
+  -webkit-appearance:none; border-radius:0;
+}
 </style>
 </head>
 <body>
 <div class="card">
-  <span class="bow">🎀</span>
-  <div class="logo">RENA</div>
-  <span class="logo-ya">'ya</span>
-  <div class="sub">2026 · Hoş Geldin</div>
+  <span class="logo">Rena</span>
+  <span class="logo-sub">Özerden</span>
+  <span class="year">2 0 2 6</span>
   <div class="rule"></div>
 
   <div id="form">
     <label>Adınız</label>
     <input type="text" id="isim" placeholder="Adınızı yazın…" maxlength="40" autocomplete="off" autocorrect="off">
+
     <label>Notunuz</label>
     <textarea id="mesaj" rows="3" placeholder="Rena'ya bir not bırakın…" maxlength="160"></textarea>
 
-    <!-- Photo upload -->
-    <label>Fotoğraf <span style="font-weight:200;color:rgba(200,104,126,.5);font-style:italic;">(isteğe bağlı)</span></label>
+    <label>Fotoğraf <span style="font-weight:200;color:rgba(160,120,80,.4);font-style:italic;">(isteğe bağlı)</span></label>
     <div class="foto-area" id="fotoArea" onclick="document.getElementById('fotoInput').click()">
-      <div class="foto-placeholder" id="fotoPlaceholder">
-        <span style="font-size:28px">📸</span>
+      <div id="fotoPlaceholder" style="text-align:center;">
+        <div class="foto-icon">📸</div>
         <div class="foto-hint">Fotoğraf seç veya çek</div>
       </div>
-      <img id="fotoPreview" class="foto-preview" style="display:none" alt="Önizleme"/>
+      <img id="fotoPreview" class="foto-preview" alt=""/>
     </div>
     <input type="file" id="fotoInput" accept="image/*" capture="environment" style="display:none">
 
@@ -1163,7 +1217,7 @@ input:focus,textarea:focus{border-color:#E8A0B0;}
   </div>
 
   <div class="success" id="success">
-    <div class="s-icon">🌸</div>
+    <span class="s-icon">🌸</span>
     <div class="s-title">Notun uçtu!</div>
     <div class="s-sub">TV ekranında süzülüyor</div>
     <button class="again" id="anotherBtn">Bir not daha bırak</button>
@@ -1171,53 +1225,52 @@ input:focus,textarea:focus{border-color:#E8A0B0;}
 </div>
 
 <script>
-// Photo preview
 document.getElementById('fotoInput').addEventListener('change', function(){
-  const file = this.files[0];
+  var file = this.files[0];
   if(!file) return;
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(e){
-    const img = document.getElementById('fotoPreview');
-    img.src = e.target.result;
-    img.style.display = 'block';
+    document.getElementById('fotoPreview').src = e.target.result;
+    document.getElementById('fotoPreview').style.display = 'block';
     document.getElementById('fotoPlaceholder').style.display = 'none';
   };
   reader.readAsDataURL(file);
 });
 
-const btn=document.getElementById('sendBtn');
-btn.addEventListener('click',async()=>{
-  const isim  = document.getElementById('isim').value.trim();
-  const mesaj = document.getElementById('mesaj').value.trim();
-  const foto  = document.getElementById('fotoInput').files[0];
-  if(!isim && !mesaj && !foto){document.getElementById('err').style.display='block';return;}
-  document.getElementById('err').style.display='none';
-  btn.disabled=true; btn.textContent='Gönderiliyor…';
-  try{
-    const fd = new FormData();
+var btn = document.getElementById('sendBtn');
+btn.addEventListener('click', async function(){
+  var isim  = document.getElementById('isim').value.trim();
+  var mesaj = document.getElementById('mesaj').value.trim();
+  var foto  = document.getElementById('fotoInput').files[0];
+  if(!isim && !mesaj && !foto){ document.getElementById('err').style.display='block'; return; }
+  document.getElementById('err').style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Gönderiliyor…';
+  try {
+    var fd = new FormData();
     if(isim)  fd.append('isim', isim);
     if(mesaj) fd.append('mesaj', mesaj);
     if(foto)  fd.append('foto', foto);
-    const r = await fetch('/api/not',{ method:'POST', body:fd });
+    var r = await fetch('/api/not', { method:'POST', body:fd });
     if(r.ok){
-      document.getElementById('form').style.display='none';
-      document.getElementById('success').style.display='block';
+      document.getElementById('form').style.display    = 'none';
+      document.getElementById('success').style.display = 'block';
     } else {
-      btn.disabled=false; btn.textContent='Ekrana Gönder ♡';
+      btn.disabled = false; btn.textContent = 'Ekrana Gönder ♡';
     }
   } catch(e){
-    btn.disabled=false; btn.textContent='Bağlantı hatası — tekrar dene';
+    btn.disabled = false; btn.textContent = 'Bağlantı hatası — tekrar dene';
   }
 });
-document.getElementById('anotherBtn').addEventListener('click',()=>{
-  document.getElementById('isim').value='';
-  document.getElementById('mesaj').value='';
-  document.getElementById('fotoInput').value='';
-  document.getElementById('fotoPreview').style.display='none';
-  document.getElementById('fotoPlaceholder').style.display='block';
-  document.getElementById('success').style.display='none';
-  document.getElementById('form').style.display='block';
-  btn.disabled=false; btn.textContent='Ekrana Gönder ♡';
+
+document.getElementById('anotherBtn').addEventListener('click', function(){
+  document.getElementById('isim').value  = '';
+  document.getElementById('mesaj').value = '';
+  document.getElementById('fotoInput').value = '';
+  document.getElementById('fotoPreview').style.display = 'none';
+  document.getElementById('fotoPlaceholder').style.display = 'block';
+  document.getElementById('success').style.display = 'none';
+  document.getElementById('form').style.display    = 'block';
+  btn.disabled = false; btn.textContent = 'Ekrana Gönder ♡';
   document.getElementById('isim').focus();
 });
 </script>
