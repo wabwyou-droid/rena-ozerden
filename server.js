@@ -71,13 +71,10 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 });
 
 // ── TV EKRANI ── //
-app.get('/', async (req, res) => {
-  const qrDataUrl = await QRCode.toDataURL(NOT_URL, {
-    width: 280, margin: 2,
-    color: { dark: '#2C1810', light: '#FFFFFF' }
-  });
-  const qrImg = '<img src="' + qrDataUrl + '" alt="QR" style="display:block;width:100%;height:100%;">';
+app.get('/', (req, res) => {
+  // QR generated client-side
 
+  const notUrl = NOT_URL;
   let page = `<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -562,7 +559,7 @@ body {
         <ellipse cx="23" cy="11" rx="1.8" ry="1.4" fill="rgba(255,230,238,.5)"/>
       </svg>
       <div class="qr-frame">
-__QR_PLACEHOLDER__
+<canvas id="qrCanvas" style="display:block;width:100%;height:100%;"></canvas>
       </div>
     </div>
 
@@ -1031,11 +1028,25 @@ function connect(){
 }
 connect();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+try {
+  new QRCode(document.getElementById('qrCanvas'), {
+    text: '' + notUrl + '',
+    width: 200, height: 200,
+    colorDark: '#2C1810', colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  setTimeout(function(){
+    var el = document.querySelector('#qrCanvas canvas') || document.querySelector('#qrCanvas img');
+    if(el){ el.style.cssText='width:100%;height:100%;display:block;'; }
+  }, 300);
+} catch(e){}
+</script>
 </body>
 </html>`);
 });
 `;
-  page = page.replace('__QR_PLACEHOLDER__', qrImg);
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(page);
