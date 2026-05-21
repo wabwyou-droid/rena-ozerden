@@ -63,7 +63,7 @@ app.get('/', async (req, res) => {
   const notUrl = NOT_URL;
   const QRCode = require('qrcode');
   const qrDataUrl = await QRCode.toDataURL(notUrl, {
-    width: 300, margin: 2,
+    width: 160, margin: 1,
     color: { dark: '#1A0A00', light: '#FFFFFF' }
   });
   const qrImgTag = '<img src="' + qrDataUrl + '" style="display:block;width:100%;height:auto;" alt="QR"/>';
