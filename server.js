@@ -336,6 +336,9 @@ app.post('/admin/clear', async (req, res) => {
   res.redirect('/admin?key=' + ADMIN_KEY);
 });
 
+// Ping endpoint — UptimeRobot için
+app.get('/ping', (req, res) => res.send('ok'));
+
 server.listen(PORT, '0.0.0.0', () => {
   console.log('\n✨  Rena Özerden\n');
   console.log('📺  TV  →  http://localhost:' + PORT);
