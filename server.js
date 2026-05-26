@@ -117,25 +117,30 @@ app.get('/', async (req, res) => {
   const fpBlock  = "<!-- FOOTPRINT OVERLAY - fixed, outside canvas -->\n<div id=\"fp-overlay\" style=\"position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;\"></div>\n\n<script>\n(function() {\n  function foot(flip) {\n    var s = document.createElementNS('http://www.w3.org/2000/svg','svg');\n    s.setAttribute('viewBox','0 0 32 36');\n    s.setAttribute('width','12');\n    s.setAttribute('height','13');\n    var ns = 'http://www.w3.org/2000/svg';\n    var g = document.createElementNS(ns,'g');\n    if(flip) g.setAttribute('transform','scale(-1,1) translate(-32,0)');\n\n    // Palm \u2014 chubby baby palm shape\n    var palm = document.createElementNS(ns,'path');\n    palm.setAttribute('d',\n      'M6,32 C2,31 1,27 2,23 C3,19 4,17 5,15 ' +\n      'C6,13 7,12 9,12 C11,12 13,12 15,13 ' +\n      'C17,12 19,12 21,13 C23,12 25,13 26,15 ' +\n      'C27,17 28,19 28,23 C29,27 28,31 25,32 Z'\n    );\n    palm.setAttribute('fill','#C8A090');\n    palm.setAttribute('opacity','0.42');\n    g.appendChild(palm);\n\n    // Palm crease line\n    var crease = document.createElementNS(ns,'path');\n    crease.setAttribute('d','M5,22 C10,20 18,20 27,22');\n    crease.setAttribute('stroke','#B08070');\n    crease.setAttribute('stroke-width','0.7');\n    crease.setAttribute('fill','none');\n    crease.setAttribute('opacity','0.18');\n    g.appendChild(crease);\n\n    // Fingers \u2014 4 chubby baby fingers (thumb hidden when crawling)\n    var fingers = [\n      {cx:7,  cy:8,  rx:2.8, ry:3.2},\n      {cx:12, cy:6,  rx:2.6, ry:3.4},\n      {cx:18, cy:6,  rx:2.6, ry:3.4},\n      {cx:23, cy:7.5,rx:2.4, ry:3.1},\n    ];\n    fingers.forEach(function(f) {\n      // Finger body\n      var e = document.createElementNS(ns,'ellipse');\n      e.setAttribute('cx', f.cx); e.setAttribute('cy', f.cy);\n      e.setAttribute('rx', f.rx); e.setAttribute('ry', f.ry);\n      e.setAttribute('fill','#C8A090');\n      e.setAttribute('opacity','0.40');\n      g.appendChild(e);\n      // Knuckle crease\n      var k = document.createElementNS(ns,'path');\n      k.setAttribute('d','M'+(f.cx-f.rx*.6)+','+(f.cy+f.ry*.2)+' Q'+f.cx+','+(f.cy+f.ry*.4)+' '+(f.cx+f.rx*.6)+','+(f.cy+f.ry*.2));\n      k.setAttribute('stroke','#B08070');\n      k.setAttribute('stroke-width','0.5');\n      k.setAttribute('fill','none');\n      k.setAttribute('opacity','0.2');\n      g.appendChild(k);\n      // Tiny nail\n      var n = document.createElementNS(ns,'ellipse');\n      n.setAttribute('cx', f.cx); n.setAttribute('cy', f.cy - f.ry*0.55);\n      n.setAttribute('rx', f.rx*0.6); n.setAttribute('ry', f.ry*0.28);\n      n.setAttribute('fill','rgba(255,240,235,0.4)');\n      g.appendChild(n);\n    });\n\n    // Thumb \u2014 peeking from side\n    var thumb = document.createElementNS(ns,'ellipse');\n    thumb.setAttribute('cx','3'); thumb.setAttribute('cy','18');\n    thumb.setAttribute('rx','2.2'); thumb.setAttribute('ry','3.5');\n    thumb.setAttribute('fill','#C8A090');\n    thumb.setAttribute('opacity','0.35');\n    thumb.setAttribute('transform','rotate(-25,3,18)');\n    g.appendChild(thumb);\n\n    s.appendChild(g);\n    return s;\n  }\n\n  function walk() {\n    var ov = document.getElementById('fp-overlay');\n    var W  = window.innerWidth;\n    var H  = window.innerHeight;\n\n    // Start position and direction\n    var sx  = 0.08 + Math.random() * 0.78;\n    var sy  = 0.12 + Math.random() * 0.68;\n    var ang = (-15 + Math.random() * 30) * Math.PI / 180;\n    var stride = 0.05 + Math.random() * 0.02;\n\n    for (var i = 0; i < 5; i++) {\n      (function(idx) {\n        var right = idx % 2 === 0;\n        var perp  = ang + Math.PI / 2;\n        var lat   = right ? 0.022 : -0.022;\n        var px    = (sx + Math.cos(ang) * stride * idx + Math.cos(perp) * lat) * W;\n        var py    = (sy + Math.sin(ang) * stride * idx + Math.sin(perp) * lat) * H;\n        var rot   = (ang * 180 / Math.PI) + (right ? 8 : -8);\n\n        setTimeout(function() {\n          var wrap = document.createElement('div');\n          wrap.style.cssText =\n            'position:absolute;' +\n            'left:' + px + 'px;' +\n            'top:'  + py + 'px;' +\n            'transform:rotate(' + rot + 'deg);' +\n            'opacity:0;' +\n            'transition:opacity 0.5s ease;';\n          wrap.appendChild(foot(!right));\n          ov.appendChild(wrap);\n\n          requestAnimationFrame(function(){ requestAnimationFrame(function(){\n            wrap.style.opacity = '0.65';\n          }); });\n\n          setTimeout(function(){\n            wrap.style.transition = 'opacity 1.8s ease';\n            wrap.style.opacity = '0';\n            setTimeout(function(){ if(wrap.parentNode) wrap.remove(); }, 1900);\n          }, 3500);\n\n        }, idx * 400);\n      })(i);\n    }\n  }\n\n  setTimeout(function(){\n    walk();\n    setInterval(walk, 5000 + Math.random() * 3000);\n  }, 1500);\n})();\n</script>\n\n\n";
 
   const wsScript = `<script>
+  // Safe esc function for WebSocket context
+  function esc(str){ var d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
+
   function connect(){
     var proto=location.protocol==='https:'?'wss:':'ws:';
     var ws=new WebSocket(proto+'//'+location.host);
     ws.onmessage=function(e){
-      var msg=JSON.parse(e.data);
-      if(msg.type==='init'){
-        if(!window._gUsed)window._gUsed=[];
-        msg.dilekler.forEach(function(d){ spawnNote(d.isim,d.mesaj,d.foto); });
-        count=msg.dilekler.length;
-        document.getElementById('ct').textContent=count+' not';
-      } else if(msg.type==='dilek'){
-        spawnNote(msg.dilek.isim,msg.dilek.mesaj,msg.dilek.foto);
-      } else if(msg.type==='clear'){
-        document.getElementById('notes').innerHTML='';
-        count=0;
-        document.getElementById('ct').textContent='0 not';
-        window._gUsed=[];
-        window._noteQueue=[];
-      }
+      try {
+        var msg=JSON.parse(e.data);
+        if(msg.type==='init'){
+          if(!window._gUsed)window._gUsed=[];
+          if(!window._noteQueue)window._noteQueue=[];
+          msg.dilekler.forEach(function(d){ if(typeof spawnNote==='function') spawnNote(d.isim,d.mesaj,d.foto); });
+          if(typeof count!=='undefined'){ count=msg.dilekler.length; }
+          var ct=document.getElementById('ct'); if(ct) ct.textContent=(msg.dilekler.length)+' not';
+        } else if(msg.type==='dilek'){
+          if(typeof spawnNote==='function') spawnNote(msg.dilek.isim,msg.dilek.mesaj,msg.dilek.foto);
+        } else if(msg.type==='clear'){
+          var n=document.getElementById('notes'); if(n) n.innerHTML='';
+          if(typeof count!=='undefined') count=0;
+          var ct=document.getElementById('ct'); if(ct) ct.textContent='0 not';
+          window._gUsed=[]; window._noteQueue=[];
+        }
+      } catch(err){ console.log('WS error:',err); }
     };
     ws.onclose=function(){ setTimeout(connect,3000); };
   }
