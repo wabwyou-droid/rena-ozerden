@@ -75,10 +75,13 @@ app.use(express.json());
 app.post('/api/not', upload.single('foto'), async (req, res) => {
   const isim  = (req.body && req.body.isim  ? String(req.body.isim).slice(0,40)  : '');
   const mesaj = (req.body && req.body.mesaj ? String(req.body.mesaj).slice(0,160) : '');
-  if (!isim && !mesaj && !req.file) return res.status(400).json({ ok: false });
+  if (!isim && !mesaj && !req.file && !(req.body && req.body.foto)) return res.status(400).json({ ok: false });
 
   let fotoBase64 = null;
-  if (req.file) {
+  if (req.body && req.body.foto && req.body.foto.startsWith('data:image')) {
+    // Client-side compressed base64
+    fotoBase64 = req.body.foto.slice(0, 200000); // max ~150KB
+  } else if (req.file) {
     fotoBase64 = 'data:' + req.file.mimetype + ';base64,' + req.file.buffer.toString('base64');
   }
 
@@ -239,9 +242,28 @@ input:focus,textarea:focus{border-color:#C8A878;}
 </div>
 <script>
 document.getElementById('fotoInput').addEventListener('change', function(){
-  var file=this.files[0]; if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){ document.getElementById('fotoPreview').src=e.target.result; document.getElementById('fotoPreview').style.display='block'; document.getElementById('fotoPlaceholder').style.display='none'; };
+  var file = this.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    // Compress image before preview and upload
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var MAX = 400; // max width/height px
+      var w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX/w); w = MAX; } }
+      else       { if (h > MAX) { w = Math.round(w * MAX/h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var compressed = canvas.toDataURL('image/jpeg', 0.6);
+      document.getElementById('fotoPreview').src = compressed;
+      document.getElementById('fotoPreview').style.display = 'block';
+      document.getElementById('fotoPlaceholder').style.display = 'none';
+      // Store compressed version for upload
+      window._compressedFoto = compressed;
+    };
+    img.src = e.target.result;
+  };
   reader.readAsDataURL(file);
 });
 var btn=document.getElementById('sendBtn');
