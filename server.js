@@ -128,6 +128,54 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .title-line{width:min(10vw,120px);height:1px;background:linear-gradient(to right,transparent,#C8A878,transparent);margin:.6vw auto;opacity:.5;}
 .flower-wrap{width:92%;}
 .bloom-sway{transform-origin:50% 98%;}
+/* Stem grows from bottom */
+.stem-main{transform-origin:50% 100%;animation:stemGrow 24s linear infinite;opacity:0;}
+@keyframes stemGrow{
+  0%  {transform:scaleY(0);opacity:0;}
+  3%  {transform:scaleY(0.5);opacity:0.8;}
+  7%  {transform:scaleY(1);opacity:1;}
+  85% {transform:scaleY(1);opacity:1;}
+  96% {transform:scaleY(0.3);opacity:0.3;}
+  100%{transform:scaleY(0);opacity:0;}
+}
+/* Left branch grows from center outward */
+.branch-left{transform-origin:100% 50%;animation:branchLeft 24s linear infinite 0.6s;opacity:0;}
+@keyframes branchLeft{
+  0%  {transform:scaleX(0);opacity:0;}
+  2%  {transform:scaleX(0.5);opacity:0.7;}
+  5%  {transform:scaleX(1);opacity:1;}
+  85% {transform:scaleX(1);opacity:1;}
+  96% {transform:scaleX(0.2);opacity:0;}
+  100%{transform:scaleX(0);opacity:0;}
+}
+/* Right branch grows from center outward */
+.branch-right{transform-origin:0% 50%;animation:branchRight 24s linear infinite 1s;opacity:0;}
+@keyframes branchRight{
+  0%  {transform:scaleX(0);opacity:0;}
+  2%  {transform:scaleX(0.5);opacity:0.7;}
+  5%  {transform:scaleX(1);opacity:1;}
+  85% {transform:scaleX(1);opacity:1;}
+  96% {transform:scaleX(0.2);opacity:0;}
+  100%{transform:scaleX(0);opacity:0;}
+}
+/* Leaves appear after branches */
+.leaf{animation:leafIn 24s ease-in-out infinite;opacity:0;}
+@keyframes leafIn{
+  0%,6%{opacity:0;transform:scale(0);}
+  10% {opacity:0.8;transform:scale(1);}
+  85% {opacity:0.8;transform:scale(1);}
+  96% {opacity:0;transform:scale(0.2);}
+  100%{opacity:0;transform:scale(0);}
+}
+/* Small bud on branch */
+.bud{animation:budIn 24s ease-in-out infinite;opacity:0;}
+@keyframes budIn{
+  0%,8%{opacity:0;transform:scale(0);}
+  13% {opacity:0.8;transform:scale(1);}
+  85% {opacity:0.8;transform:scale(1);}
+  96% {opacity:0;transform:scale(0.2);}
+  100%{opacity:0;transform:scale(0);}
+}
 .bloom-petal{
   transform-origin:50% 100%;
   animation:petalGrow 18s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
@@ -237,12 +285,12 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
             <radialGradient id="rcg" cx="45%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFF0E0"/><stop offset="100%" stop-color="#E8C090"/></radialGradient>
             <radialGradient id="rlg" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#D0DDB0"/><stop offset="100%" stop-color="#8AAA68"/></radialGradient>
           </defs>
-          <path d="M150,195 Q148,165 150,140 Q152,115 150,95" stroke="#9AB878" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M150,155 Q128,151 108,149 Q90,148 72,144" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M90,148 Q78,135 70,122 Q85,130 95,143Z" fill="url(#rlg)" opacity=".8"/>
-          <path d="M150,138 Q172,133 192,130 Q210,128 228,124" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M210,130 Q222,117 230,103 Q218,115 205,126Z" fill="url(#rlg)" opacity=".75"/>
-          <g transform="translate(228,112)">
+          <path class="stem-main" d="M150,195 Q148,165 150,140 Q152,115 150,95" stroke="#9AB878" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path class="branch-left" d="M150,155 Q128,151 108,149 Q90,148 72,144" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path class="leaf" style="animation-delay:1.2s;" d="M90,148 Q78,135 70,122 Q85,130 95,143Z" fill="url(#rlg)" opacity=".8"/>
+          <path class="branch-right" d="M150,138 Q172,133 192,130 Q210,128 228,124" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path class="leaf" style="animation-delay:1.6s;" d="M210,130 Q222,117 230,103 Q218,115 205,126Z" fill="url(#rlg)" opacity=".75"/>
+          <g class="bud" transform="translate(228,112)">
             <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp3)" opacity=".8" transform="rotate(0,0,0)"/>
             <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp2)" opacity=".8" transform="rotate(72,0,0)"/>
             <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp3)" opacity=".8" transform="rotate(144,0,0)"/>
@@ -251,28 +299,28 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
             <circle cx="0" cy="0" r="5" fill="url(#rcg)"/>
           </g>
           <g transform="translate(150,75)">
-            <g class="bloom-petal" style="--base-rot:0deg;--bloom-del:0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:45deg;--bloom-del:.15s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:90deg;--bloom-del:.3s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:135deg;--bloom-del:.45s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:180deg;--bloom-del:.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:225deg;--bloom-del:.75s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:270deg;--bloom-del:.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:315deg;--bloom-del:1.05s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-inner" style="--base-rot:22.5deg;--bloom-del:.5s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:67.5deg;--bloom-del:.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:112.5deg;--bloom-del:.7s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:157.5deg;--bloom-del:.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:202.5deg;--bloom-del:.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:247.5deg;--bloom-del:1.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:292.5deg;--bloom-del:1.1s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:337.5deg;--bloom-del:1.2s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:0deg;--bloom-del:1.4s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:60deg;--bloom-del:1.5s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:120deg;--bloom-del:1.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:180deg;--bloom-del:1.7s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:240deg;--bloom-del:1.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:300deg;--bloom-del:1.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-petal" style="--base-rot:0deg;--bloom-del:2.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:45deg;--bloom-del:2.15s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:90deg;--bloom-del:2.3s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:135deg;--bloom-del:2.45s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:180deg;--bloom-del:2.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:225deg;--bloom-del:2.75s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:270deg;--bloom-del:2.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
+            <g class="bloom-petal" style="--base-rot:315deg;--bloom-del:3.05s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
+            <g class="bloom-inner" style="--base-rot:22.5deg;--bloom-del:2.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:67.5deg;--bloom-del:2.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:112.5deg;--bloom-del:3.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:157.5deg;--bloom-del:3.1s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:202.5deg;--bloom-del:2.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:247.5deg;--bloom-del:3.2s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:292.5deg;--bloom-del:3.3s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:337.5deg;--bloom-del:3.4s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
+            <g class="bloom-inner" style="--base-rot:0deg;--bloom-del:3.5s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-inner" style="--base-rot:60deg;--bloom-del:3.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-inner" style="--base-rot:120deg;--bloom-del:3.7s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-inner" style="--base-rot:180deg;--bloom-del:3.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-inner" style="--base-rot:240deg;--bloom-del:3.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
+            <g class="bloom-inner" style="--base-rot:300deg;--bloom-del:4.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
             <g class="bloom-center">
               <circle cx="0" cy="0" r="16" fill="url(#rcg)"/>
               <circle cx="0" cy="0" r="10" fill="#F5DCC0" opacity=".9"/>
@@ -423,96 +471,107 @@ function spawnNote(isim,mesaj,foto){
     s.appendChild(g);return s;
   }
 
-  // Spitz dog SVG silhouette — fluffy, curled tail, pointy ears
+  // Spitz SVG — refined fluffy silhouette
   function spitzSVG(direction){
     var flip = direction === 'left';
-    var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('viewBox','0 0 80 50');
-    svg.setAttribute('width','min(8vw,80px)');
-    svg.setAttribute('height','auto');
-    var ns = 'http://www.w3.org/2000/svg';
-    var g = document.createElementNS(ns,'g');
-    if(flip) g.setAttribute('transform','scale(-1,1) translate(-80,0)');
-    var col = 'rgba(210,175,150,0.55)';
+    // Build as HTML string for cleaner SVG
+    var c1 = 'rgba(220,185,160,0.6)';  // main fur
+    var c2 = 'rgba(200,160,135,0.55)'; // shading
+    var c3 = 'rgba(80,50,30,0.65)';    // dark details
+    var nose_c = 'rgba(60,35,20,0.7)';
 
-    // Body — fluffy oval
-    var body=document.createElementNS(ns,'ellipse');
-    body.setAttribute('cx','38');body.setAttribute('cy','30');body.setAttribute('rx','22');body.setAttribute('ry','14');
-    body.setAttribute('fill',col);g.appendChild(body);
+    var transform = flip ? 'transform="scale(-1,1) translate(-90,0)"' : '';
 
-    // Neck
-    var neck=document.createElementNS(ns,'ellipse');
-    neck.setAttribute('cx','54');neck.setAttribute('cy','22');neck.setAttribute('rx','9');neck.setAttribute('ry','8');
-    neck.setAttribute('fill',col);g.appendChild(neck);
+    var svg = '<svg viewBox="0 0 90 56" xmlns="http://www.w3.org/2000/svg" style="width:min(9vw,90px);height:auto;display:block;">' +
+      '<g ' + transform + '>' +
 
-    // Head
-    var head=document.createElementNS(ns,'ellipse');
-    head.setAttribute('cx','63');head.setAttribute('cy','16');head.setAttribute('rx','10');head.setAttribute('ry','9');
-    head.setAttribute('fill',col);g.appendChild(head);
+      // Curled tail (behind body, draw first)
+      '<path d="M22,30 Q8,22 6,12 Q5,4 13,6 Q20,8 18,18 Q16,25 22,30Z" fill="'+c1+'"/>' +
+      '<ellipse cx="10" cy="7" rx="6" ry="5" fill="'+c1+'"/>' +
+      '<path d="M22,30 Q9,24 8,14 Q7,7 13,8" stroke="'+c2+'" stroke-width="1" fill="none"/>' +
 
-    // Snout
-    var snout=document.createElementNS(ns,'ellipse');
-    snout.setAttribute('cx','71');snout.setAttribute('cy','19');snout.setAttribute('rx','5');snout.setAttribute('ry','4');
-    snout.setAttribute('fill',col);g.appendChild(snout);
+      // Body — fluffy, slightly raised back
+      '<ellipse cx="42" cy="34" rx="24" ry="15" fill="'+c1+'"/>' +
+      // Chest fluff
+      '<ellipse cx="58" cy="30" rx="12" ry="11" fill="'+c1+'"/>' +
+      // Back fluff texture
+      '<path d="M20,28 Q30,22 42,24 Q54,22 62,26" stroke="'+c2+'" stroke-width="1.2" fill="none" opacity="0.5"/>' +
 
-    // Nose
-    var nose=document.createElementNS(ns,'ellipse');
-    nose.setAttribute('cx','75');nose.setAttribute('cy','18');nose.setAttribute('rx','2');nose.setAttribute('ry','1.5');
-    nose.setAttribute('fill','rgba(160,100,80,0.6)');g.appendChild(nose);
+      // Front legs
+      '<rect x="56" y="40" width="6" height="12" rx="3" fill="'+c1+'"/>' +
+      '<rect x="64" y="41" width="5" height="11" rx="2.5" fill="'+c2+'"/>' +
+      // Back legs
+      '<rect x="30" y="41" width="6" height="11" rx="3" fill="'+c1+'"/>' +
+      '<rect x="38" y="42" width="5" height="10" rx="2.5" fill="'+c2+'"/>' +
+      // Paws
+      '<ellipse cx="59" cy="52" rx="4" ry="2.5" fill="'+c2+'"/>' +
+      '<ellipse cx="67" cy="52" rx="3.5" ry="2.2" fill="'+c2+'"/>' +
+      '<ellipse cx="33" cy="52" rx="4" ry="2.5" fill="'+c2+'"/>' +
+      '<ellipse cx="41" cy="52" rx="3.5" ry="2.2" fill="'+c2+'"/>' +
 
-    // Left ear
-    var earL=document.createElementNS(ns,'path');
-    earL.setAttribute('d','M57,10 L60,2 L65,9Z');earL.setAttribute('fill',col);g.appendChild(earL);
-    // Right ear  
-    var earR=document.createElementNS(ns,'path');
-    earR.setAttribute('d','M63,9 L68,2 L72,9Z');earR.setAttribute('fill',col);g.appendChild(earR);
+      // Neck ruff — Spitz has big fluffy ruff
+      '<ellipse cx="62" cy="26" rx="11" ry="10" fill="'+c1+'"/>' +
+      '<ellipse cx="63" cy="24" rx="9" ry="8" fill="rgba(235,205,185,0.55)"/>' +
 
-    // Eye
-    var eye=document.createElementNS(ns,'circle');
-    eye.setAttribute('cx','67');eye.setAttribute('cy','14');eye.setAttribute('r','2');
-    eye.setAttribute('fill','rgba(80,50,30,0.7)');g.appendChild(eye);
+      // Head
+      '<ellipse cx="72" cy="18" rx="11" ry="10" fill="'+c1+'"/>' +
+      // Head shading
+      '<ellipse cx="70" cy="17" rx="7" ry="6" fill="rgba(235,205,185,0.45)"/>' +
 
-    // Curled tail — Spitz signature
-    var tail=document.createElementNS(ns,'path');
-    tail.setAttribute('d','M18,26 Q5,20 4,12 Q3,5 10,8 Q16,11 14,20 Q13,25 18,26Z');
-    tail.setAttribute('fill',col);g.appendChild(tail);
+      // Ears — pointy Spitz ears
+      '<path d="M65,12 L67,2 L73,10Z" fill="'+c1+'"/>' +
+      '<path d="M73,10 L77,2 L81,10Z" fill="'+c1+'"/>' +
+      '<path d="M66,12 L68,4 L72,10Z" fill="rgba(200,155,135,0.5)"/>' +
+      '<path d="M74,10 L77,4 L80,10Z" fill="rgba(200,155,135,0.5)"/>' +
 
-    // Fluffy tail tip
-    var tailTip=document.createElementNS(ns,'ellipse');
-    tailTip.setAttribute('cx','8');tailTip.setAttribute('cy','9');tailTip.setAttribute('rx','5');tailTip.setAttribute('ry','4');
-    tailTip.setAttribute('fill',col);g.appendChild(tailTip);
+      // Snout — narrow pointed
+      '<ellipse cx="81" cy="21" rx="6" ry="4.5" fill="'+c1+'"/>' +
+      '<path d="M79,20 Q82,18 84,20 Q82,23 79,20Z" fill="rgba(235,205,185,0.5)"/>' +
 
-    // Legs (4 simple ovals)
-    [{cx:30,cy:42},{cx:38,cy:43},{cx:46,cy:42},{cx:54,cy:41}].forEach(function(l){
-      var leg=document.createElementNS(ns,'ellipse');
-      leg.setAttribute('cx',l.cx);leg.setAttribute('cy',l.cy);leg.setAttribute('rx','4');leg.setAttribute('ry','5');
-      leg.setAttribute('fill',col);g.appendChild(leg);
-    });
+      // Nose
+      '<ellipse cx="85" cy="19" rx="2.5" ry="1.8" fill="'+nose_c+'"/>' +
+      // Mouth
+      '<path d="M84,21 Q85,23 86,21" stroke="'+c3+'" stroke-width="0.8" fill="none"/>' +
 
-    svg.appendChild(g);
-    return svg;
+      // Eye — bright with highlight
+      '<circle cx="75" cy="15" r="2.8" fill="'+c3+'"/>' +
+      '<circle cx="74" cy="14" r="1" fill="rgba(255,255,255,0.7)"/>' +
+
+      '</g></svg>';
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML = svg;
+    return wrap.firstChild;
   }
 
   // Run spitz across screen
   function runSpitz(){
     var W=window.innerWidth, H=window.innerHeight;
     var fromRight = Math.random() > 0.5;
-    var startX = fromRight ? W + 100 : -100;
-    var endX   = fromRight ? -120  : W + 120;
-    var y = H * (0.55 + Math.random() * 0.3); // bottom half
-    var dur = 4 + Math.random() * 3; // seconds
+    var startX = fromRight ? W + 100 : -120;
+    var endX   = fromRight ? -140 : W + 120;
+    var y = H * (0.58 + Math.random() * 0.25);
+    var dur = 5 + Math.random() * 3;
 
     var wrap = document.createElement('div');
-    wrap.style.cssText = 'position:absolute;top:'+y+'px;left:'+startX+'px;transition:left '+dur+'s linear,opacity 0.5s ease;opacity:0;';
+    // Use keyframe animation for smooth run + bounce
+    var keyframeName = 'spitzMove_' + Date.now();
+    var styleEl = document.createElement('style');
+    styleEl.textContent = '@keyframes ' + keyframeName + '{' +
+      '0%{left:'+startX+'px;top:'+y+'px;}' +
+      '15%{top:'+(y-4)+'px;}25%{top:'+y+'px;}' +
+      '40%{top:'+(y-5)+'px;}50%{top:'+y+'px;}' +
+      '65%{top:'+(y-4)+'px;}75%{top:'+y+'px;}' +
+      '90%{top:'+(y-3)+'px;}100%{left:'+endX+'px;top:'+y+'px;}' +
+    '}';
+    document.head.appendChild(styleEl);
+
+    wrap.style.cssText = 'position:absolute;top:'+y+'px;left:'+startX+'px;opacity:0;transition:opacity 0.6s ease;animation:'+keyframeName+' '+dur+'s linear forwards;';
     wrap.appendChild(spitzSVG(fromRight ? 'left' : 'right'));
-
-    // Leg animation
-    wrap.style.animation = 'spitzRun 0.3s ease-in-out infinite';
-
     ov.appendChild(wrap);
+
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      wrap.style.opacity = '0.7';
-      wrap.style.left = endX + 'px';
+      wrap.style.opacity = '0.72';
     });});
 
     // Leave paw prints as it passes
@@ -534,6 +593,7 @@ function spawnNote(isim,mesaj,foto){
 
     setTimeout(function(){
       if(wrap.parentNode) wrap.remove();
+      if(styleEl.parentNode) styleEl.remove();
     }, (dur+1)*1000);
   }
 
