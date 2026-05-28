@@ -206,6 +206,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 @keyframes toastAnim{0%{opacity:0;transform:translateX(-50%) translateY(-8px);}10%{opacity:1;transform:translateX(-50%) translateY(0);}78%{opacity:1;}100%{opacity:0;}}
 .counter{position:absolute;bottom:1.8vw;right:1.5vw;z-index:20;display:flex;align-items:center;gap:.4vw;}
 .ldot{width:5px;height:5px;border-radius:50%;background:#C8A878;flex-shrink:0;animation:ldotPulse 3s ease-in-out infinite;}
+@keyframes spitzRun{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 @keyframes ldotPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .ctxt{font-family:'Lato',sans-serif;font-weight:200;font-size:clamp(7px,.7vw,10px);letter-spacing:.3em;color:rgba(168,128,96,.6);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -395,11 +396,151 @@ function spawnNote(isim,mesaj,foto){
   setTimeout(function(){if(t.parentNode)t.remove();},4200);
 }
 
-// HAND PRINTS
+// SPITZ DOG running + paw prints
 (function(){
   var ov=document.createElement('div');
   ov.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
   document.body.appendChild(ov);
+
+  // Paw print SVG (dog paw, not hand)
+  function paw(flip){
+    var s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    s.setAttribute('viewBox','0 0 28 30');s.setAttribute('width','14');s.setAttribute('height','15');
+    var ns='http://www.w3.org/2000/svg';
+    var g=document.createElementNS(ns,'g');
+    if(flip)g.setAttribute('transform','scale(-1,1) translate(-28,0)');
+    // Main pad
+    var pad=document.createElementNS(ns,'ellipse');
+    pad.setAttribute('cx','14');pad.setAttribute('cy','20');pad.setAttribute('rx','8');pad.setAttribute('ry','7');
+    pad.setAttribute('fill','#C8A090');pad.setAttribute('opacity','0.45');g.appendChild(pad);
+    // 4 toe beans
+    var toes=[{cx:7,cy:11,rx:3.2,ry:2.8},{cx:12,cy:8.5,rx:3,ry:2.6},{cx:17.5,cy:8.5,rx:3,ry:2.6},{cx:22.5,cy:11,rx:3,ry:2.7}];
+    toes.forEach(function(t){
+      var e=document.createElementNS(ns,'ellipse');
+      e.setAttribute('cx',t.cx);e.setAttribute('cy',t.cy);e.setAttribute('rx',t.rx);e.setAttribute('ry',t.ry);
+      e.setAttribute('fill','#C8A090');e.setAttribute('opacity','0.38');g.appendChild(e);
+    });
+    s.appendChild(g);return s;
+  }
+
+  // Spitz dog SVG silhouette — fluffy, curled tail, pointy ears
+  function spitzSVG(direction){
+    var flip = direction === 'left';
+    var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 80 50');
+    svg.setAttribute('width','min(8vw,80px)');
+    svg.setAttribute('height','auto');
+    var ns = 'http://www.w3.org/2000/svg';
+    var g = document.createElementNS(ns,'g');
+    if(flip) g.setAttribute('transform','scale(-1,1) translate(-80,0)');
+    var col = 'rgba(210,175,150,0.55)';
+
+    // Body — fluffy oval
+    var body=document.createElementNS(ns,'ellipse');
+    body.setAttribute('cx','38');body.setAttribute('cy','30');body.setAttribute('rx','22');body.setAttribute('ry','14');
+    body.setAttribute('fill',col);g.appendChild(body);
+
+    // Neck
+    var neck=document.createElementNS(ns,'ellipse');
+    neck.setAttribute('cx','54');neck.setAttribute('cy','22');neck.setAttribute('rx','9');neck.setAttribute('ry','8');
+    neck.setAttribute('fill',col);g.appendChild(neck);
+
+    // Head
+    var head=document.createElementNS(ns,'ellipse');
+    head.setAttribute('cx','63');head.setAttribute('cy','16');head.setAttribute('rx','10');head.setAttribute('ry','9');
+    head.setAttribute('fill',col);g.appendChild(head);
+
+    // Snout
+    var snout=document.createElementNS(ns,'ellipse');
+    snout.setAttribute('cx','71');snout.setAttribute('cy','19');snout.setAttribute('rx','5');snout.setAttribute('ry','4');
+    snout.setAttribute('fill',col);g.appendChild(snout);
+
+    // Nose
+    var nose=document.createElementNS(ns,'ellipse');
+    nose.setAttribute('cx','75');nose.setAttribute('cy','18');nose.setAttribute('rx','2');nose.setAttribute('ry','1.5');
+    nose.setAttribute('fill','rgba(160,100,80,0.6)');g.appendChild(nose);
+
+    // Left ear
+    var earL=document.createElementNS(ns,'path');
+    earL.setAttribute('d','M57,10 L60,2 L65,9Z');earL.setAttribute('fill',col);g.appendChild(earL);
+    // Right ear  
+    var earR=document.createElementNS(ns,'path');
+    earR.setAttribute('d','M63,9 L68,2 L72,9Z');earR.setAttribute('fill',col);g.appendChild(earR);
+
+    // Eye
+    var eye=document.createElementNS(ns,'circle');
+    eye.setAttribute('cx','67');eye.setAttribute('cy','14');eye.setAttribute('r','2');
+    eye.setAttribute('fill','rgba(80,50,30,0.7)');g.appendChild(eye);
+
+    // Curled tail — Spitz signature
+    var tail=document.createElementNS(ns,'path');
+    tail.setAttribute('d','M18,26 Q5,20 4,12 Q3,5 10,8 Q16,11 14,20 Q13,25 18,26Z');
+    tail.setAttribute('fill',col);g.appendChild(tail);
+
+    // Fluffy tail tip
+    var tailTip=document.createElementNS(ns,'ellipse');
+    tailTip.setAttribute('cx','8');tailTip.setAttribute('cy','9');tailTip.setAttribute('rx','5');tailTip.setAttribute('ry','4');
+    tailTip.setAttribute('fill',col);g.appendChild(tailTip);
+
+    // Legs (4 simple ovals)
+    [{cx:30,cy:42},{cx:38,cy:43},{cx:46,cy:42},{cx:54,cy:41}].forEach(function(l){
+      var leg=document.createElementNS(ns,'ellipse');
+      leg.setAttribute('cx',l.cx);leg.setAttribute('cy',l.cy);leg.setAttribute('rx','4');leg.setAttribute('ry','5');
+      leg.setAttribute('fill',col);g.appendChild(leg);
+    });
+
+    svg.appendChild(g);
+    return svg;
+  }
+
+  // Run spitz across screen
+  function runSpitz(){
+    var W=window.innerWidth, H=window.innerHeight;
+    var fromRight = Math.random() > 0.5;
+    var startX = fromRight ? W + 100 : -100;
+    var endX   = fromRight ? -120  : W + 120;
+    var y = H * (0.55 + Math.random() * 0.3); // bottom half
+    var dur = 4 + Math.random() * 3; // seconds
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'position:absolute;top:'+y+'px;left:'+startX+'px;transition:left '+dur+'s linear,opacity 0.5s ease;opacity:0;';
+    wrap.appendChild(spitzSVG(fromRight ? 'left' : 'right'));
+
+    // Leg animation
+    wrap.style.animation = 'spitzRun 0.3s ease-in-out infinite';
+
+    ov.appendChild(wrap);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      wrap.style.opacity = '0.7';
+      wrap.style.left = endX + 'px';
+    });});
+
+    // Leave paw prints as it passes
+    var steps = 6;
+    for(var i=0;i<steps;i++){
+      (function(idx){
+        var elapsed = (dur * 1000) * (idx / steps);
+        var px = startX + (endX - startX) * (idx / steps);
+        setTimeout(function(){
+          var pw = document.createElement('div');
+          pw.style.cssText = 'position:absolute;left:'+px+'px;top:'+(y+10)+'px;transform:rotate('+(fromRight?180:0)+'deg);opacity:0;transition:opacity 0.4s ease;';
+          pw.appendChild(paw(idx%2===0));
+          ov.appendChild(pw);
+          requestAnimationFrame(function(){requestAnimationFrame(function(){ pw.style.opacity='0.5'; });});
+          setTimeout(function(){ pw.style.transition='opacity 2s ease'; pw.style.opacity='0'; setTimeout(function(){ if(pw.parentNode)pw.remove(); },2100); }, 2500);
+        }, elapsed);
+      })(i);
+    }
+
+    setTimeout(function(){
+      if(wrap.parentNode) wrap.remove();
+    }, (dur+1)*1000);
+  }
+
+  // Run every 20-35 seconds
+  setTimeout(function(){ runSpitz(); setInterval(runSpitz, 22000+Math.random()*13000); }, 5000);
+
+  // Also keep paw prints walking (instead of hand prints)
   function foot(flip){
     var s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 32 36');s.setAttribute('width','12');s.setAttribute('height','13');
     var ns='http://www.w3.org/2000/svg',g=document.createElementNS(ns,'g');
