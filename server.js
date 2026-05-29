@@ -99,10 +99,10 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 app.get('/', async (req, res) => {
   const QRCodeLib = require('qrcode');
   const qrDataUrl = await QRCodeLib.toDataURL(NOT_URL, {
-    width: 240, margin: 2,
+    width: 180, margin: 1,
     color: { dark: '#1A0A00', light: '#FFFFFF' }
   });
-  const qrImg = '<img src="' + qrDataUrl + '" style="display:block;width:min(16vw,200px);height:min(16vw,200px);" alt="QR"/>';
+  const qrImg = '<img src="' + qrDataUrl + '" style="display:block;width:min(12vw,150px);height:min(12vw,150px);" alt="QR"/>';
 
   const html = `<!DOCTYPE html>
 <html lang="tr">
@@ -126,7 +126,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .title-rena{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(26px,5vw,78px);color:#7A5535;letter-spacing:.14em;line-height:1;display:block;}
 .title-ozerden{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(26px,5vw,78px);color:#7A5535;letter-spacing:.14em;line-height:1;display:block;}
 .title-line{width:min(10vw,120px);height:1px;background:linear-gradient(to right,transparent,#C8A878,transparent);margin:.6vw auto;opacity:.5;}
-.flower-wrap{width:92%;}
+.flower-wrap{width:92%;max-height:45%;display:flex;align-items:center;justify-content:center;overflow:visible;}
 
 
   13% {opacity:0.8;transform:scale(1);}
@@ -175,40 +175,20 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
   97% {transform:scale(.05);opacity:0;}
   100%{transform:scale(0);opacity:0;}
 }
-/* ── EMPRESYONİST ÇİÇEK ANİMASYONU ── */
-/* Draw-path: stroke-dashoffset sıfıra iner = çizilme efekti */
-.draw-path {
-  stroke-dasharray: var(--pl, 200);
-  stroke-dashoffset: var(--pl, 200);
-  animation: drawLine 32s ease-in-out infinite;
-  animation-delay: var(--animation-delay, 0s);
+@keyframes flowerSway {
+  0%,100% { transform:rotate(0deg) translateY(0); }
+  20%     { transform:rotate(1.8deg) translateY(-2px); }
+  40%     { transform:rotate(-0.8deg) translateY(1px); }
+  60%     { transform:rotate(2.2deg) translateY(-3px); }
+  80%     { transform:rotate(-1.2deg) translateY(1px); }
 }
-@keyframes drawLine {
-  0%,1%   { stroke-dashoffset: var(--pl, 200); opacity:0; }
-  3%      { opacity:1; }
-  12%     { stroke-dashoffset: 0; opacity:1; }
-  80%     { stroke-dashoffset: 0; opacity:1; }
-  94%     { stroke-dashoffset: var(--pl, 200); opacity:0; }
-  100%    { stroke-dashoffset: var(--pl, 200); opacity:0; }
-}
-/* Watercolour fill — bleeds in softly after outline */
-@keyframes wcFill {
-  0%,1%  { opacity:0; }
-  8%     { opacity:.65; }
-  80%    { opacity:.65; }
-  93%    { opacity:0; }
-  100%   { opacity:0; }
-}
-/* animation-delay via inline style overrides */
-.draw-path { animation-delay: var(--ad, 0s); }
-
 .qr-block{text-align:center;}
 .qr-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:.5vw;background:rgba(255,250,244,.92);border:1px solid rgba(200,168,136,.25);padding:.8vw 1vw .6vw;box-shadow:0 4px 20px rgba(160,120,80,.1);}
 .qr-bow{font-size:clamp(12px,1.5vw,22px);line-height:1;margin-bottom:.1vw;}
 .qr-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:clamp(18px,2.6vw,40px);color:#7A5535;letter-spacing:.04em;line-height:1.35;}
 .qr-heart{font-size:clamp(8px,.9vw,13px);color:#C87888;margin-top:.2vw;opacity:.8;}
-.qr-frame{display:inline-block;background:#fff;padding:7px;border:1px solid rgba(200,168,136,.25);}
-.qr-frame img{display:block !important;width:min(16vw,200px) !important;height:min(16vw,200px) !important;}
+.qr-frame{display:inline-block;background:#fff;padding:6px;border:1px solid rgba(200,168,136,.25);}
+.qr-frame img{display:block !important;width:min(12vw,150px) !important;height:min(12vw,150px) !important;}
 .right-col{position:relative;overflow:hidden;}
 .col-line{position:absolute;top:0;bottom:0;width:1px;left:50%;background:linear-gradient(to bottom,transparent,rgba(200,168,136,.08) 20%,rgba(200,168,136,.08) 80%,transparent);z-index:1;pointer-events:none;}
 #snow{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
@@ -252,171 +232,199 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
         <span class="title-ozerden">Özerden</span>
       </div>
       <div class="flower-wrap">
-        <svg id="impFlower" viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible;">
+        <svg viewBox="0 0 260 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:42vh;overflow:visible;animation:flowerSway 6s ease-in-out infinite;transform-origin:50% 98%;">
           <defs>
-            <!-- Watercolour washes -->
-            <radialGradient id="wc1" cx="40%" cy="25%" r="70%">
-              <stop offset="0%" stop-color="#FDE8F2" stop-opacity=".9"/>
-              <stop offset="55%" stop-color="#EFA0C8" stop-opacity=".75"/>
-              <stop offset="100%" stop-color="#C8609A" stop-opacity=".6"/>
+            <!-- Deep layered petal gradients -->
+            <radialGradient id="g_p_back" cx="50%" cy="85%" r="80%">
+              <stop offset="0%" stop-color="#E8A0C0"/>
+              <stop offset="50%" stop-color="#D06090"/>
+              <stop offset="100%" stop-color="#A03060"/>
             </radialGradient>
-            <radialGradient id="wc2" cx="60%" cy="25%" r="70%">
-              <stop offset="0%" stop-color="#FDF0F8" stop-opacity=".9"/>
-              <stop offset="55%" stop-color="#E890BA" stop-opacity=".75"/>
-              <stop offset="100%" stop-color="#B85088" stop-opacity=".6"/>
+            <radialGradient id="g_p_mid" cx="45%" cy="20%" r="75%">
+              <stop offset="0%" stop-color="#FEF0F8"/>
+              <stop offset="30%" stop-color="#F4B0D0"/>
+              <stop offset="70%" stop-color="#E07AAE"/>
+              <stop offset="100%" stop-color="#C05888"/>
             </radialGradient>
-            <radialGradient id="wc3" cx="50%" cy="15%" r="65%">
-              <stop offset="0%" stop-color="#FFF4FA" stop-opacity=".9"/>
-              <stop offset="50%" stop-color="#F5C0D8" stop-opacity=".8"/>
-              <stop offset="100%" stop-color="#D878A8" stop-opacity=".65"/>
+            <radialGradient id="g_p_front" cx="42%" cy="18%" r="72%">
+              <stop offset="0%" stop-color="#FFF8FC"/>
+              <stop offset="25%" stop-color="#FDD8EC"/>
+              <stop offset="60%" stop-color="#F0A8CC"/>
+              <stop offset="100%" stop-color="#D870A8"/>
             </radialGradient>
-            <radialGradient id="wcLeaf" cx="30%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#E0EEC0" stop-opacity=".9"/>
-              <stop offset="60%" stop-color="#90B850" stop-opacity=".75"/>
-              <stop offset="100%" stop-color="#608030" stop-opacity=".6"/>
+            <radialGradient id="g_p_inner" cx="40%" cy="15%" r="68%">
+              <stop offset="0%" stop-color="#FFF0F8"/>
+              <stop offset="35%" stop-color="#FEC8E0"/>
+              <stop offset="100%" stop-color="#E888BC"/>
             </radialGradient>
-            <radialGradient id="wcCenter" cx="35%" cy="30%" r="65%">
-              <stop offset="0%" stop-color="#FFF8E0" stop-opacity=".95"/>
-              <stop offset="50%" stop-color="#F0D070" stop-opacity=".85"/>
-              <stop offset="100%" stop-color="#C89838" stop-opacity=".7"/>
+            <radialGradient id="g_center" cx="38%" cy="28%" r="62%">
+              <stop offset="0%" stop-color="#FFFAE0"/>
+              <stop offset="40%" stop-color="#F8DC80"/>
+              <stop offset="80%" stop-color="#D8A030"/>
+              <stop offset="100%" stop-color="#B87820"/>
             </radialGradient>
-            <filter id="sketch">
-              <feTurbulence type="fractalNoise" baseFrequency="0.065" numOctaves="2" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+            <radialGradient id="g_leaf1" cx="28%" cy="22%" r="72%">
+              <stop offset="0%" stop-color="#D8ECA8"/>
+              <stop offset="55%" stop-color="#88B840"/>
+              <stop offset="100%" stop-color="#508020"/>
+            </radialGradient>
+            <radialGradient id="g_leaf2" cx="72%" cy="22%" r="72%">
+              <stop offset="0%" stop-color="#D0E8A0"/>
+              <stop offset="55%" stop-color="#80B038"/>
+              <stop offset="100%" stop-color="#487818"/>
+            </radialGradient>
+            <radialGradient id="g_stem" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#508828"/>
+              <stop offset="50%" stop-color="#78AA40"/>
+              <stop offset="100%" stop-color="#508828"/>
+            </radialGradient>
+            <filter id="fSoft">
+              <feGaussianBlur stdDeviation=".6" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
-            <filter id="wcBlur">
-              <feGaussianBlur stdDeviation="1.8"/>
-            </filter>
-            <filter id="softBlur">
-              <feGaussianBlur stdDeviation=".8"/>
+            <filter id="fPetal">
+              <feGaussianBlur stdDeviation="1.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
 
-          <!-- ── STEM — drawn upward, two overlapping strokes for depth ── -->
-          <g id="iStem" filter="url(#sketch)">
-            <path class="draw-path" id="sp0"
-              d="M130,292 C129,268 127,245 129,222 C131,200 133,182 130,158"
-              stroke="#6A9830" stroke-width="3" fill="none" stroke-linecap="round"
-              style="--pl:145;"/>
-            <!-- Second thinner stroke for texture -->
-            <path class="draw-path" id="sp0b"
-              d="M132,290 C131,268 129,248 131,226 C133,205 134,186 132,162"
-              stroke="#88B848" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".5"
-              style="--pl:142;--ad:.3s;"/>
-          </g>
+          <!-- STEM -->
+          <path d="M130,300 C128,275 126,252 128,230 C130,210 132,192 130,170"
+            stroke="url(#g_stem)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          <path d="M130,300 C129,278 127,256 129,236 C131,218 133,202 131,180"
+            stroke="rgba(255,255,255,.18)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
 
-          <!-- ── LEFT BRANCH ── -->
-          <g id="iBranchL" filter="url(#sketch)">
-            <path class="draw-path" id="bl0"
-              d="M129,240 C112,236 94,234 76,229"
-              stroke="#6A9830" stroke-width="2.2" fill="none" stroke-linecap="round"
-              style="--pl:58;--ad:.9s;"/>
-            <!-- Leaf fill — watercolour wash -->
-            <path id="iLeafL"
-              d="M76,229 C60,216 55,200 65,190 C75,181 90,185 102,198 C114,211 112,226 102,232 C94,237 84,234 76,229Z"
-              fill="url(#wcLeaf)" filter="url(#softBlur)" opacity="0" style="animation:wcFill 32s ease-in-out infinite 2.2s;"/>
-            <!-- Leaf outline sketch -->
-            <path class="draw-path" id="bl1"
-              d="M76,229 C60,216 55,200 65,190 C75,181 90,185 102,198 C114,211 112,226 102,232 C94,237 84,234 76,229Z"
-              stroke="#88B848" stroke-width="1.4" fill="none" stroke-linecap="round"
-              style="--pl:120;--ad:1.5s;"/>
-            <!-- Leaf vein -->
-            <path class="draw-path" id="bl2"
-              d="M76,229 C84,218 94,208 100,198"
-              stroke="rgba(80,130,30,.4)" stroke-width=".8" fill="none"
-              style="--pl:40;--ad:2.1s;"/>
-          </g>
+          <!-- LEFT BRANCH -->
+          <path d="M129,252 C112,247 94,244 76,238"
+            stroke="url(#g_stem)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 
-          <!-- ── RIGHT BRANCH ── -->
-          <g id="iBranchR" filter="url(#sketch)">
-            <path class="draw-path" id="br0"
-              d="M131,222 C148,217 166,212 184,206"
-              stroke="#6A9830" stroke-width="2.2" fill="none" stroke-linecap="round"
-              style="--pl:58;--ad:1.4s;"/>
-            <path id="iLeafR"
-              d="M184,206 C200,193 205,177 195,167 C185,158 170,162 160,176 C150,190 152,206 162,212 C170,217 178,213 184,206Z"
-              fill="url(#wcLeaf)" filter="url(#softBlur)" opacity="0" style="animation:wcFill 32s ease-in-out infinite 2.8s;"/>
-            <path class="draw-path" id="br1"
-              d="M184,206 C200,193 205,177 195,167 C185,158 170,162 160,176 C150,190 152,206 162,212 C170,217 178,213 184,206Z"
-              stroke="#88B848" stroke-width="1.4" fill="none"
-              style="--pl:118;--ad:2.0s;"/>
-            <path class="draw-path" id="br2"
-              d="M184,206 C178,194 172,183 170,172"
-              stroke="rgba(80,130,30,.4)" stroke-width=".8" fill="none"
-              style="--pl:40;--ad:2.6s;"/>
-          </g>
+          <!-- LEFT LEAF — full natural shape -->
+          <path d="M76,238
+            C58,224 51,206 60,194
+            C69,183 86,186 100,200
+            C114,213 114,230 104,238
+            C96,243 85,241 76,238Z"
+            fill="url(#g_leaf1)" filter="url(#fSoft)"/>
+          <!-- Leaf highlight -->
+          <path d="M76,238 C65,226 60,212 65,200 C70,190 80,188 90,195"
+            stroke="rgba(220,255,180,.35)" stroke-width="1.2" fill="none"/>
+          <!-- Leaf vein -->
+          <path d="M76,238 C84,226 94,214 100,200"
+            stroke="rgba(60,110,20,.3)" stroke-width="1" fill="none"/>
+          <!-- Secondary veins -->
+          <path d="M82,232 C82,224 84,216 86,208" stroke="rgba(60,110,20,.18)" stroke-width=".7" fill="none"/>
+          <path d="M90,234 C92,226 96,218 100,212" stroke="rgba(60,110,20,.15)" stroke-width=".7" fill="none"/>
 
-          <!-- ── FLOWER HEAD centred at (130,108) ── -->
-          <g transform="translate(130,108)">
+          <!-- RIGHT BRANCH -->
+          <path d="M131,235 C148,229 166,224 184,217"
+            stroke="url(#g_stem)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 
-            <!-- PETAL WASHES — watercolour bleeds in before outline -->
-            <ellipse id="pw1" cx="0" cy="-42" rx="18" ry="30" fill="url(#wc1)" filter="url(#wcBlur)"
-              opacity="0" transform="rotate(0)"  style="animation:wcFill 32s ease-in-out infinite 3.4s;"/>
-            <ellipse id="pw2" cx="0" cy="-42" rx="18" ry="30" fill="url(#wc2)" filter="url(#wcBlur)"
-              opacity="0" transform="rotate(72)"  style="animation:wcFill 32s ease-in-out infinite 4.0s;"/>
-            <ellipse id="pw3" cx="0" cy="-42" rx="18" ry="30" fill="url(#wc3)" filter="url(#wcBlur)"
-              opacity="0" transform="rotate(144)" style="animation:wcFill 32s ease-in-out infinite 4.6s;"/>
-            <ellipse id="pw4" cx="0" cy="-42" rx="18" ry="30" fill="url(#wc1)" filter="url(#wcBlur)"
-              opacity="0" transform="rotate(216)" style="animation:wcFill 32s ease-in-out infinite 5.2s;"/>
-            <ellipse id="pw5" cx="0" cy="-42" rx="18" ry="30" fill="url(#wc2)" filter="url(#wcBlur)"
-              opacity="0" transform="rotate(288)" style="animation:wcFill 32s ease-in-out infinite 5.8s;"/>
+          <!-- RIGHT LEAF -->
+          <path d="M184,217
+            C202,203 208,184 198,173
+            C188,162 170,166 159,180
+            C148,194 150,212 162,219
+            C170,224 178,222 184,217Z"
+            fill="url(#g_leaf2)" filter="url(#fSoft)"/>
+          <path d="M184,217 C196,205 202,190 196,178 C190,168 178,168 168,178"
+            stroke="rgba(220,255,180,.3)" stroke-width="1.2" fill="none"/>
+          <path d="M184,217 C178,204 172,192 168,180"
+            stroke="rgba(60,110,20,.28)" stroke-width="1" fill="none"/>
+          <path d="M178,213 C174,202 172,192 172,182" stroke="rgba(60,110,20,.16)" stroke-width=".7" fill="none"/>
 
-            <!-- PETAL OUTLINES — sketched, slightly wobbly -->
-            <path class="draw-path petal-stroke" id="ip1"
-              d="M0,0 C-8,-14 -16,-34 -12,-56 C-8,-74 0,-80 8,-72 C16,-64 12,-40 6,-18 C3,-8 1,-2 0,0Z"
-              stroke="#D878A8" stroke-width="1.6" fill="none" transform="rotate(0)"
-              filter="url(#sketch)" style="--pl:170;--ad:3.8s;"/>
-            <path class="draw-path petal-stroke" id="ip2"
-              d="M0,0 C-8,-14 -16,-34 -12,-56 C-8,-74 0,-80 8,-72 C16,-64 12,-40 6,-18 C3,-8 1,-2 0,0Z"
-              stroke="#C86898" stroke-width="1.6" fill="none" transform="rotate(72)"
-              filter="url(#sketch)" style="--pl:170;--ad:4.4s;"/>
-            <path class="draw-path petal-stroke" id="ip3"
-              d="M0,0 C-8,-14 -16,-34 -12,-56 C-8,-74 0,-80 8,-72 C16,-64 12,-40 6,-18 C3,-8 1,-2 0,0Z"
-              stroke="#DC88B0" stroke-width="1.6" fill="none" transform="rotate(144)"
-              filter="url(#sketch)" style="--pl:170;--ad:5.0s;"/>
-            <path class="draw-path petal-stroke" id="ip4"
-              d="M0,0 C-8,-14 -16,-34 -12,-56 C-8,-74 0,-80 8,-72 C16,-64 12,-40 6,-18 C3,-8 1,-2 0,0Z"
-              stroke="#D070A0" stroke-width="1.6" fill="none" transform="rotate(216)"
-              filter="url(#sketch)" style="--pl:170;--ad:5.6s;"/>
-            <path class="draw-path petal-stroke" id="ip5"
-              d="M0,0 C-8,-14 -16,-34 -12,-56 C-8,-74 0,-80 8,-72 C16,-64 12,-40 6,-18 C3,-8 1,-2 0,0Z"
-              stroke="#E890BC" stroke-width="1.6" fill="none" transform="rotate(36)"
-              filter="url(#sketch)" style="--pl:170;--ad:4.1s;"/>
+          <!-- ══ MAIN FLOWER at (130,115) ══ -->
+          <g transform="translate(130,115)">
 
-            <!-- Extra sketch lines on petals for impressionist texture -->
-            <path class="draw-path" d="M0,0 C-4,-16 -8,-36 -6,-58" stroke="rgba(200,100,150,.3)" stroke-width=".8" fill="none" style="--pl:65;--ad:5.2s;"/>
-            <path class="draw-path" d="M0,0 C4,-16 8,-36 6,-58" stroke="rgba(200,100,150,.25)" stroke-width=".6" fill="none" transform="rotate(72)" style="--pl:65;--ad:5.7s;"/>
+            <!-- BACK PETALS — largest, darkest, outermost ring -->
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(-36)" opacity=".8"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(0)"   opacity=".82"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(36)"  opacity=".8"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(72)"  opacity=".8"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(108)" opacity=".78"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(144)" opacity=".78"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(180)" opacity=".8"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(216)" opacity=".78"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(252)" opacity=".78"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(288)" opacity=".8"/>
+            <path d="M0,8 C-10,0 -22,-18 -26,-44 C-30,-68 -22,-86 -10,-84 C2,-82 8,-62 8,-38 C8,-18 4,2 0,8Z"
+              fill="url(#g_p_back)" transform="rotate(324)" opacity=".8"/>
 
-            <!-- CENTER wash -->
-            <circle id="icw" cx="0" cy="0" r="22" fill="url(#wcCenter)" filter="url(#wcBlur)"
-              opacity="0" style="animation:wcFill 32s ease-in-out infinite 6.8s;"/>
+            <!-- MID PETALS — second ring, lighter, shorter -->
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(18)"   filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(54)"   filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(90)"   filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(126)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(162)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(198)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(234)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(270)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(306)"  filter="url(#fPetal)"/>
+            <path d="M0,6 C-8,0 -18,-16 -20,-38 C-22,-58 -14,-72 -4,-70 C6,-68 10,-50 8,-30 C6,-14 2,2 0,6Z"
+              fill="url(#g_p_mid)" transform="rotate(342)"  filter="url(#fPetal)"/>
 
-            <!-- CENTER outline — sketched circle, multiple strokes -->
-            <circle class="draw-path" cx="0" cy="0" r="18"
-              stroke="#D09840" stroke-width="1.8" fill="none"
-              filter="url(#sketch)" style="--pl:115;--ad:7.0s;"/>
-            <circle class="draw-path" cx="0" cy="0" r="11"
-              stroke="#E0AA50" stroke-width="1.2" fill="none"
-              style="--pl:70;--ad:7.5s;"/>
+            <!-- FRONT PETALS — innermost visible ring, palest -->
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(0)"   filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(45)"  filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(90)"  filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(135)" filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(180)" filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(225)" filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(270)" filter="url(#fPetal)"/>
+            <path d="M0,4 C-5,0 -12,-12 -13,-28 C-14,-42 -8,-52 0,-50 C8,-48 12,-36 10,-22 C8,-10 3,2 0,4Z"
+              fill="url(#g_p_front)" transform="rotate(315)" filter="url(#fPetal)"/>
 
-            <!-- Stamens — drawn one by one -->
-            <g stroke="#C89040" stroke-linecap="round">
-              <line class="draw-path" x1="0" y1="-10" x2="0" y2="-20" stroke-width="1.2" style="--pl:11;--ad:7.8s;"/>
-              <circle cx="0" cy="-21" r="2.5" fill="#E0AA50" opacity="0" style="animation:wcFill 32s ease-in-out infinite 8.1s;"/>
-              <line class="draw-path" x1="8" y1="-6" x2="13" y2="-15" stroke-width="1.1" style="--pl:12;--ad:8.0s;"/>
-              <circle cx="14" cy="-16" r="2.2" fill="#D89838" opacity="0" style="animation:wcFill 32s ease-in-out infinite 8.3s;"/>
-              <line class="draw-path" x1="10" y1="2" x2="17" y2="8" stroke-width="1.1" style="--pl:11;--ad:8.2s;"/>
-              <circle cx="18" cy="9" r="2" fill="#E0AA50" opacity="0" style="animation:wcFill 32s ease-in-out infinite 8.5s;"/>
-              <line class="draw-path" x1="-8" y1="-6" x2="-14" y2="-14" stroke-width="1.1" style="--pl:11;--ad:8.4s;"/>
-              <circle cx="-15" cy="-15" r="2" fill="#D89838" opacity="0" style="animation:wcFill 32s ease-in-out infinite 8.7s;"/>
-              <line class="draw-path" x1="-10" y1="2" x2="-16" y2="8" stroke-width="1.1" style="--pl:11;--ad:8.6s;"/>
-              <circle cx="-17" cy="9" r="2" fill="#E0AA50" opacity="0" style="animation:wcFill 32s ease-in-out infinite 8.9s;"/>
+            <!-- CENTER -->
+            <circle cx="0" cy="0" r="22" fill="url(#g_center)" filter="url(#fSoft)"/>
+            <circle cx="0" cy="0" r="15" fill="#F8E070" opacity=".75"/>
+            <circle cx="-3" cy="-3" r="7" fill="rgba(255,252,210,.65)"/>
+            <!-- Pollen texture -->
+            <circle cx="4"  cy="-6" r="2"   fill="rgba(180,130,20,.5)"/>
+            <circle cx="-5" cy="4"  r="1.8" fill="rgba(180,130,20,.45)"/>
+            <circle cx="6"  cy="4"  r="1.6" fill="rgba(180,130,20,.4)"/>
+            <circle cx="-3" cy="-8" r="1.5" fill="rgba(180,130,20,.42)"/>
+            <circle cx="8"  cy="-2" r="1.4" fill="rgba(180,130,20,.38)"/>
+            <!-- Stamens -->
+            <g stroke="#C08020" stroke-width="1" stroke-linecap="round" opacity=".85">
+              <line x1="0"  y1="-13" x2="0"  y2="-20"/><circle cx="0"   cy="-21" r="2.4" fill="#E0A830"/>
+              <line x1="9"  y1="-9"  x2="14" y2="-15"/><circle cx="15"  cy="-16" r="2"   fill="#D89828"/>
+              <line x1="13" y1="2"   x2="19" y2="4"  /><circle cx="20"  cy="5"   r="2"   fill="#E0A830"/>
+              <line x1="8"  y1="11"  x2="11" y2="17" /><circle cx="12"  cy="18"  r="1.8" fill="#D89828"/>
+              <line x1="-5" y1="13"  x2="-7" y2="19" /><circle cx="-7"  cy="20"  r="1.8" fill="#E0A830"/>
+              <line x1="-13"cy="4"   x2="-19"y2="6"  /><circle cx="-20" cy="7"   r="1.8" fill="#D89828"/>
+              <line x1="-12"cy="-8"  x2="-17"cy="-14"/><circle cx="-18" cy="-15" r="1.8" fill="#E0A830"/>
+              <line x1="-4" y1="-13" x2="-6" y2="-20"/><circle cx="-6"  cy="-21" r="1.6" fill="#D89828"/>
             </g>
           </g>
         </svg>
       </div>
 
-      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">
+      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">
         <div class="qr-wrap">
           <div class="qr-bow">🎀</div>
           <div class="qr-title">Rena'ya<br>bir not bırak</div>
