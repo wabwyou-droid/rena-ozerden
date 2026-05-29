@@ -99,10 +99,10 @@ app.post('/api/not', upload.single('foto'), async (req, res) => {
 app.get('/', async (req, res) => {
   const QRCodeLib = require('qrcode');
   const qrDataUrl = await QRCodeLib.toDataURL(NOT_URL, {
-    width: 180, margin: 1,
+    width: 220, margin: 2,
     color: { dark: '#1A0A00', light: '#FFFFFF' }
   });
-  const qrImg = "<img src='" + qrDataUrl + "' style='display:block;width:min(12vw,150px);height:min(12vw,150px);' alt='QR'/>";
+  const qrImg = "<img src='" + qrDataUrl + "' style='display:block;width:min(13vw,165px);height:min(13vw,165px);' alt='QR'/>";
 
   const html = `<!DOCTYPE html>
 <html lang="tr">
@@ -121,12 +121,12 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
 .canvas>*{position:relative;z-index:2;}
 .layout{position:absolute;inset:0;z-index:5;display:grid;grid-template-columns:33.33% 66.67%;}
-.left-col{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:2.5vw 2vw 2vw 2.5vw;border-right:1px solid rgba(200,168,136,.15);}
+.left-col{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:2vw 1.5vw;border-right:1px solid rgba(200,168,136,.15);height:100%;overflow:hidden;}
 .title-block{text-align:center;}
 .title-rena{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(26px,5vw,78px);color:#7A5535;letter-spacing:.14em;line-height:1;display:block;}
 .title-ozerden{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(26px,5vw,78px);color:#7A5535;letter-spacing:.14em;line-height:1;display:block;}
 .title-line{width:min(10vw,120px);height:1px;background:linear-gradient(to right,transparent,#C8A878,transparent);margin:.6vw auto;opacity:.5;}
-.flower-wrap{width:92%;max-height:45%;display:flex;align-items:center;justify-content:center;overflow:visible;}
+.flower-wrap{width:88%;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:visible;}
 
 
   13% {opacity:0.8;transform:scale(1);}
@@ -188,7 +188,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .qr-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:clamp(18px,2.6vw,40px);color:#7A5535;letter-spacing:.04em;line-height:1.35;}
 .qr-heart{font-size:clamp(8px,.9vw,13px);color:#C87888;margin-top:.2vw;opacity:.8;}
 .qr-frame{display:inline-block;background:#fff;padding:6px;border:1px solid rgba(200,168,136,.25);}
-.qr-frame img,.qr-frame canvas{display:block !important;width:min(12vw,150px) !important;height:min(12vw,150px) !important;}
+.qr-frame img,.qr-frame canvas{display:block !important;width:min(13vw,165px) !important;height:min(13vw,165px) !important;}
 .right-col{position:relative;overflow:hidden;}
 .col-line{position:absolute;top:0;bottom:0;width:1px;left:50%;background:linear-gradient(to bottom,transparent,rgba(200,168,136,.08) 20%,rgba(200,168,136,.08) 80%,transparent);z-index:1;pointer-events:none;}
 #snow{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
@@ -424,8 +424,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
         </svg>
       </div>
 
-      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">
-        <div class="qr-wrap">
+      <div class="qr-block"><div class="qr-wrap">
           <div class="qr-bow">🎀</div>
           <div class="qr-title">Rena'ya<br>bir not bırak</div>
           <div class="qr-frame">QR_PLACEHOLDER</div>
