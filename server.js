@@ -501,13 +501,17 @@ function launchNote(isim,mesaj,foto){
   var fHtml=foto?'<img class="nc-foto" src="'+foto+'" alt=""/>':'';
   el.innerHTML=fHtml+'<div class="nc-name">'+esc(isim)+'</div><div class="nc-msg">'+esc(mesaj)+'</div>';
   document.getElementById('notes').appendChild(el);
-  // Fotoğraflı notlar daha uzun — dinamik yükseklik
-  var noteH = foto ? 52 : 30; // worst case: max photo + 160 chars
-  col.lastBottom=startTop+noteH;
+  // Gerçek yüksekliği ölç (px → vh)
+  var vh = window.innerHeight / 100;
+  var noteH = (el.getBoundingClientRect().height / vh) || (foto ? 52 : 30);
+  // Fotoğraf yüklenmeden önce ölçüldüyse güvenli minimum al
+  if (foto && noteH < 40) noteH = 52;
+  if (!foto && noteH < 18) noteH = 30;
+  col.lastBottom = startTop + noteH + 6; // +6 extra gap
   var speed=130/16,startTime=Date.now();
   var tracker=setInterval(function(){
     var elapsed=(Date.now()-startTime)/1000;
-    col.lastBottom=startTop+noteH+speed*elapsed;
+    col.lastBottom=startTop+noteH+6+speed*elapsed;
     if(col.lastBottom>110){clearInterval(tracker);col.lastBottom=-999;}
   },200);
   setTimeout(function(){
