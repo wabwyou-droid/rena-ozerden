@@ -127,60 +127,14 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .title-ozerden{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(26px,5vw,78px);color:#7A5535;letter-spacing:.14em;line-height:1;display:block;}
 .title-line{width:min(10vw,120px);height:1px;background:linear-gradient(to right,transparent,#C8A878,transparent);margin:.6vw auto;opacity:.5;}
 .flower-wrap{width:92%;}
-.bloom-sway{transform-origin:50% 98%;}
-/* Stem grows from bottom */
-.stem-main{transform-origin:50% 100%;animation:stemGrow 24s linear infinite;opacity:0;}
-@keyframes stemGrow{
-  0%  {transform:scaleY(0);opacity:0;}
-  3%  {transform:scaleY(0.5);opacity:0.8;}
-  7%  {transform:scaleY(1);opacity:1;}
-  85% {transform:scaleY(1);opacity:1;}
-  96% {transform:scaleY(0.3);opacity:0.3;}
-  100%{transform:scaleY(0);opacity:0;}
-}
-/* Left branch grows from center outward */
-.branch-left{transform-origin:100% 50%;animation:branchLeft 24s linear infinite 0.6s;opacity:0;}
-@keyframes branchLeft{
-  0%  {transform:scaleX(0);opacity:0;}
-  2%  {transform:scaleX(0.5);opacity:0.7;}
-  5%  {transform:scaleX(1);opacity:1;}
-  85% {transform:scaleX(1);opacity:1;}
-  96% {transform:scaleX(0.2);opacity:0;}
-  100%{transform:scaleX(0);opacity:0;}
-}
-/* Right branch grows from center outward */
-.branch-right{transform-origin:0% 50%;animation:branchRight 24s linear infinite 1s;opacity:0;}
-@keyframes branchRight{
-  0%  {transform:scaleX(0);opacity:0;}
-  2%  {transform:scaleX(0.5);opacity:0.7;}
-  5%  {transform:scaleX(1);opacity:1;}
-  85% {transform:scaleX(1);opacity:1;}
-  96% {transform:scaleX(0.2);opacity:0;}
-  100%{transform:scaleX(0);opacity:0;}
-}
-/* Leaves appear after branches */
-.leaf{animation:leafIn 24s ease-in-out infinite;opacity:0;}
-@keyframes leafIn{
-  0%,6%{opacity:0;transform:scale(0);}
-  10% {opacity:0.8;transform:scale(1);}
-  85% {opacity:0.8;transform:scale(1);}
-  96% {opacity:0;transform:scale(0.2);}
-  100%{opacity:0;transform:scale(0);}
-}
-/* Small bud on branch */
-.bud{animation:budIn 24s ease-in-out infinite;opacity:0;}
-@keyframes budIn{
-  0%,8%{opacity:0;transform:scale(0);}
+
+
   13% {opacity:0.8;transform:scale(1);}
   85% {opacity:0.8;transform:scale(1);}
   96% {opacity:0;transform:scale(0.2);}
   100%{opacity:0;transform:scale(0);}
 }
-.bloom-petal{
-  transform-origin:50% 100%;
-  animation:petalGrow 18s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
-  animation-delay:var(--bloom-del,0s);
-}
+
 @keyframes petalGrow{
   0%  {transform:rotate(var(--base-rot)) scaleY(0) scaleX(0);opacity:0;}
   8%  {transform:rotate(var(--base-rot)) scaleY(1.12) scaleX(1.08);opacity:1;}
@@ -193,11 +147,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
   96% {transform:rotate(var(--base-rot)) scaleY(.05) scaleX(.1);opacity:0;}
   100%{transform:rotate(var(--base-rot)) scaleY(0) scaleX(0);opacity:0;}
 }
-.bloom-inner{
-  transform-origin:50% 100%;
-  animation:innerGrow 18s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
-  animation-delay:var(--bloom-del,.3s);
-}
+
 @keyframes innerGrow{
   0%  {transform:rotate(var(--base-rot)) scaleY(0) scaleX(0);opacity:0;}
   10% {transform:rotate(var(--base-rot)) scaleY(1.1) scaleX(1.06);opacity:1;}
@@ -210,7 +160,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
   97% {transform:rotate(var(--base-rot)) scaleY(.04) scaleX(.08);opacity:0;}
   100%{transform:rotate(var(--base-rot)) scaleY(0) scaleX(0);opacity:0;}
 }
-.bloom-center{animation:centerGrow 18s ease-in-out infinite .8s;}
+
 @keyframes centerGrow{
   0%  {transform:scale(0);opacity:0;}
   12% {transform:scale(1.2);opacity:1;}
@@ -225,6 +175,187 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
   97% {transform:scale(.05);opacity:0;}
   100%{transform:scale(0);opacity:0;}
 }
+/* ── FLOWER ANIMATION ── */
+.flower-wrap { width:92%; }
+.bloom-sway  { transform-origin:50% 98%; }
+
+/* Stem: draws upward */
+.fl-stem { stroke-dasharray:200; stroke-dashoffset:200; animation:drawStem 28s ease-in-out infinite; }
+@keyframes drawStem {
+  0%,2% { stroke-dashoffset:200; opacity:0; }
+  12%   { stroke-dashoffset:0;   opacity:1; }
+  80%   { stroke-dashoffset:0;   opacity:1; }
+  95%   { stroke-dashoffset:200; opacity:0; }
+  100%  { stroke-dashoffset:200; opacity:0; }
+}
+/* Branches: draw outward */
+.fl-branch-l { stroke-dasharray:120; stroke-dashoffset:120; animation:drawBL 28s ease-in-out infinite 1s; }
+.fl-branch-r { stroke-dasharray:120; stroke-dashoffset:-120; animation:drawBR 28s ease-in-out infinite 1.5s; }
+@keyframes drawBL {
+  0%,2% { stroke-dashoffset:120; opacity:0; }
+  10%   { stroke-dashoffset:0;   opacity:1; }
+  80%   { stroke-dashoffset:0;   opacity:1; }
+  95%   { stroke-dashoffset:120; opacity:0; }
+  100%  { stroke-dashoffset:120; opacity:0; }
+}
+@keyframes drawBR {
+  0%,2% { stroke-dashoffset:-120; opacity:0; }
+  10%   { stroke-dashoffset:0;    opacity:1; }
+  80%   { stroke-dashoffset:0;    opacity:1; }
+  95%   { stroke-dashoffset:-120; opacity:0; }
+  100%  { stroke-dashoffset:-120; opacity:0; }
+}
+/* Leaves */
+.fl-leaf { transform-origin:100% 100%; animation:leafGrow 28s ease-in-out infinite; opacity:0; }
+@keyframes leafGrow {
+  0%,9%  { transform:scale(0) rotate(-20deg); opacity:0; }
+  16%    { transform:scale(1.08) rotate(2deg); opacity:0.85; }
+  19%    { transform:scale(0.97) rotate(0deg); opacity:0.82; }
+  80%    { transform:scale(1) rotate(0deg);    opacity:0.82; }
+  95%    { transform:scale(0) rotate(-10deg);  opacity:0; }
+  100%   { transform:scale(0);                 opacity:0; }
+}
+.fl-leaf-r { transform-origin:0% 100%; animation:leafGrowR 28s ease-in-out infinite 0.5s; opacity:0; }
+@keyframes leafGrowR {
+  0%,9%  { transform:scale(0) rotate(20deg); opacity:0; }
+  16%    { transform:scale(1.08) rotate(-2deg); opacity:0.8; }
+  19%    { transform:scale(0.97) rotate(0deg);  opacity:0.78; }
+  80%    { transform:scale(1) rotate(0deg);     opacity:0.78; }
+  95%    { transform:scale(0) rotate(10deg);    opacity:0; }
+  100%   { transform:scale(0);                  opacity:0; }
+}
+/* Side bud */
+.fl-bud { transform-origin:50% 100%; animation:budOpen 28s ease-in-out infinite 1.8s; opacity:0; }
+@keyframes budOpen {
+  0%,12% { transform:scaleY(0) scaleX(0); opacity:0; }
+  19%    { transform:scaleY(1.06) scaleX(1.04); opacity:0.8; }
+  22%    { transform:scaleY(1) scaleX(1);       opacity:0.8; }
+  80%    { transform:scaleY(1) scaleX(1);       opacity:0.75; }
+  95%    { transform:scaleY(0) scaleX(0);       opacity:0; }
+  100%   { transform:scaleY(0) scaleX(0);       opacity:0; }
+}
+/* Main petals: each petal curls open from base */
+.fl-petal {
+  transform-origin: var(--px, 50%) var(--py, 100%);
+  animation: petalOpen 28s cubic-bezier(0.34,1.2,0.64,1) infinite;
+  animation-delay: var(--pd, 2s);
+  opacity:0;
+}
+@keyframes petalOpen {
+  0%,55%   { transform:rotate(var(--pr,0deg)) scale(0);    opacity:0; }
+  62%      { transform:rotate(var(--pr,0deg)) scale(1.12); opacity:1; }
+  66%      { transform:rotate(var(--pr,0deg)) scale(0.95); opacity:0.97; }
+  69%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
+  /* gentle heartbeat */
+  78%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
+  80%      { transform:rotate(var(--pr,0deg)) scale(1.03); opacity:1; }
+  82%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
+  92%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:0.9; }
+  98%      { transform:rotate(var(--pr,0deg)) scale(0.05); opacity:0; }
+  100%     { transform:rotate(var(--pr,0deg)) scale(0);    opacity:0; }
+}
+/* Center */
+.fl-center { transform-origin:50% 50%; animation:centerOpen 28s ease-in-out infinite 4.2s; opacity:0; }
+@keyframes centerOpen {
+  0%,55%  { transform:scale(0); opacity:0; }
+  62%     { transform:scale(1.3); opacity:1; }
+  67%     { transform:scale(0.92); opacity:1; }
+  70%     { transform:scale(1.0); opacity:1; }
+  78%     { transform:scale(1.0); opacity:1; }
+  80%     { transform:scale(1.1); opacity:1; filter:drop-shadow(0 0 5px rgba(255,210,180,.8)); }
+  84%     { transform:scale(1.0); opacity:1; filter:none; }
+  92%     { transform:scale(1.0); opacity:0.9; }
+  98%     { transform:scale(0.05); opacity:0; }
+  100%    { transform:scale(0); opacity:0; }
+}
+/* ── FLOWER ANIMATION ── */
+/* Stem: grows upward from root */
+#fStem{transform-origin:50% 100%;animation:stemRise 28s ease-in-out infinite;}
+@keyframes stemRise{
+  0%,2%{opacity:0;transform:scaleY(0);}
+  8%{opacity:1;transform:scaleY(1);}
+  82%{opacity:1;transform:scaleY(1);}
+  95%{opacity:0;transform:scaleY(.15);}
+  100%{opacity:0;transform:scaleY(0);}
+}
+/* Left branch: grows outward left */
+#fBranchL{transform-origin:100% 50%;animation:branchL 28s ease-in-out infinite 1s;}
+@keyframes branchL{
+  0%,5%{opacity:0;transform:scaleX(0);}
+  12%{opacity:1;transform:scaleX(1);}
+  82%{opacity:1;transform:scaleX(1);}
+  95%{opacity:0;transform:scaleX(0);}
+  100%{opacity:0;transform:scaleX(0);}
+}
+/* Right branch: grows outward right */
+#fBranchR{transform-origin:0% 50%;animation:branchR 28s ease-in-out infinite 1.5s;}
+@keyframes branchR{
+  0%,6%{opacity:0;transform:scaleX(0);}
+  13%{opacity:1;transform:scaleX(1);}
+  82%{opacity:1;transform:scaleX(1);}
+  95%{opacity:0;transform:scaleX(0);}
+  100%{opacity:0;transform:scaleX(0);}
+}
+/* Outer petals: each unfurls from center */
+#p1{transform-origin:0% 100%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.0s;}
+#p2{transform-origin:0% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.4s;}
+#p3{transform-origin:0% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.8s;}
+#p4{transform-origin:100% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.2s;}
+#p5{transform-origin:100% 100%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.6s;}
+@keyframes petalUnfurl{
+  0%,1%{opacity:0;transform:scale(0) rotate(-15deg);}
+  8%{opacity:1;transform:scale(1.06) rotate(2deg);}
+  13%{opacity:1;transform:scale(.98) rotate(-1deg);}
+  16%{opacity:1;transform:scale(1) rotate(0deg);}
+  /* Heartbeat at peak */
+  60%{transform:scale(1);}
+  63%{transform:scale(1.04);}
+  66%{transform:scale(.98);}
+  69%{transform:scale(1.02);}
+  72%{transform:scale(1);}
+  80%{opacity:1;transform:scale(1);}
+  93%{opacity:0;transform:scale(0) rotate(10deg);}
+  100%{opacity:0;transform:scale(0);}
+}
+/* Inner petals: slightly later */
+#ip1{transform-origin:50% 100%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.8s;}
+#ip2{transform-origin:0% 50%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.1s;}
+#ip3{transform-origin:50% 0%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.4s;}
+#ip4{transform-origin:100% 50%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.7s;}
+#ip5{transform-origin:50% 100%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 6.0s;}
+@keyframes innerUnfurl{
+  0%,1%{opacity:0;transform:scale(0);}
+  7%{opacity:1;transform:scale(1.08);}
+  11%{opacity:1;transform:scale(.97);}
+  14%{opacity:1;transform:scale(1);}
+  60%{transform:scale(1);}64%{transform:scale(1.05);}68%{transform:scale(1);}
+  80%{opacity:1;transform:scale(1);}
+  93%{opacity:0;transform:scale(0);}
+  100%{opacity:0;transform:scale(0);}
+}
+/* Center: last to open, glows at peak */
+#fFlower circle:first-of-type{animation:centerOpen 28s ease-in-out infinite 6.5s;}
+@keyframes centerOpen{
+  0%,1%{opacity:0;transform:scale(0);}
+  6%{opacity:1;transform:scale(1.15);}
+  10%{opacity:1;transform:scale(.94);}
+  13%{opacity:1;transform:scale(1);}
+  58%{transform:scale(1);filter:none;}
+  63%{transform:scale(1.1);filter:drop-shadow(0 0 6px rgba(248,200,80,.7));}
+  68%{transform:scale(1);filter:none;}
+  80%{opacity:1;}
+  93%{opacity:0;transform:scale(0);}
+  100%{opacity:0;transform:scale(0);}
+}
+/* Calyx/sepal: appear with stem */
+#fFlower path:nth-child(1),
+#fFlower path:nth-child(2),
+#fFlower path:nth-child(3){animation:sepalIn 28s ease infinite 2s;opacity:0;}
+@keyframes sepalIn{
+  0%,3%{opacity:0;transform:scale(0);}8%{opacity:.7;transform:scale(1);}
+  80%{opacity:.7;}93%{opacity:0;transform:scale(0);}100%{opacity:0;}
+}
+
 .qr-block{text-align:center;}
 .qr-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:.5vw;background:rgba(255,250,244,.92);border:1px solid rgba(200,168,136,.25);padding:.8vw 1vw .6vw;box-shadow:0 4px 20px rgba(160,120,80,.1);}
 .qr-bow{font-size:clamp(12px,1.5vw,22px);line-height:1;margin-bottom:.1vw;}
@@ -254,7 +385,6 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 @keyframes toastAnim{0%{opacity:0;transform:translateX(-50%) translateY(-8px);}10%{opacity:1;transform:translateX(-50%) translateY(0);}78%{opacity:1;}100%{opacity:0;}}
 .counter{position:absolute;bottom:1.8vw;right:1.5vw;z-index:20;display:flex;align-items:center;gap:.4vw;}
 .ldot{width:5px;height:5px;border-radius:50%;background:#C8A878;flex-shrink:0;animation:ldotPulse 3s ease-in-out infinite;}
-@keyframes spitzRun{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 @keyframes ldotPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .ctxt{font-family:'Lato',sans-serif;font-weight:200;font-size:clamp(7px,.7vw,10px);letter-spacing:.3em;color:rgba(168,128,96,.6);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
@@ -276,68 +406,155 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
         <span class="title-ozerden">Özerden</span>
       </div>
       <div class="flower-wrap">
-        <div class="bloom-sway">
-        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+        <svg id="flowerSvg" viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible;">
           <defs>
-            <radialGradient id="rp1" cx="50%" cy="20%" r="70%"><stop offset="0%" stop-color="#FEE0E8"/><stop offset="50%" stop-color="#F5B0C0"/><stop offset="100%" stop-color="#D88898"/></radialGradient>
-            <radialGradient id="rp2" cx="50%" cy="20%" r="70%"><stop offset="0%" stop-color="#FEE8EE"/><stop offset="50%" stop-color="#ECA8BC"/><stop offset="100%" stop-color="#CC8090"/></radialGradient>
-            <radialGradient id="rp3" cx="50%" cy="20%" r="60%"><stop offset="0%" stop-color="#FFF0F4"/><stop offset="50%" stop-color="#F8C0CC"/><stop offset="100%" stop-color="#E090A0"/></radialGradient>
-            <radialGradient id="rcg" cx="45%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFF0E0"/><stop offset="100%" stop-color="#E8C090"/></radialGradient>
-            <radialGradient id="rlg" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="#D0DDB0"/><stop offset="100%" stop-color="#8AAA68"/></radialGradient>
+            <!-- Petal gradients - rich pink -->
+            <radialGradient id="pg1" cx="38%" cy="20%" r="70%">
+              <stop offset="0%" stop-color="#FDE8F0"/>
+              <stop offset="35%" stop-color="#F4AECA"/>
+              <stop offset="70%" stop-color="#E27EA8"/>
+              <stop offset="100%" stop-color="#C85A88"/>
+            </radialGradient>
+            <radialGradient id="pg2" cx="62%" cy="20%" r="70%">
+              <stop offset="0%" stop-color="#FEEAF2"/>
+              <stop offset="35%" stop-color="#F2A8C8"/>
+              <stop offset="70%" stop-color="#D870A0"/>
+              <stop offset="100%" stop-color="#BC5080"/>
+            </radialGradient>
+            <radialGradient id="pg3" cx="50%" cy="15%" r="65%">
+              <stop offset="0%" stop-color="#FFF0F6"/>
+              <stop offset="40%" stop-color="#F8C4D8"/>
+              <stop offset="100%" stop-color="#DC88B0"/>
+            </radialGradient>
+            <radialGradient id="cg" cx="40%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#FFF8E8"/>
+              <stop offset="50%" stop-color="#F5DCA0"/>
+              <stop offset="100%" stop-color="#D4A055"/>
+            </radialGradient>
+            <radialGradient id="lg1" cx="25%" cy="25%" r="70%">
+              <stop offset="0%" stop-color="#D8EAB8"/>
+              <stop offset="60%" stop-color="#94BB60"/>
+              <stop offset="100%" stop-color="#6A9840"/>
+            </radialGradient>
+            <radialGradient id="lg2" cx="75%" cy="25%" r="70%">
+              <stop offset="0%" stop-color="#D0E4B0"/>
+              <stop offset="60%" stop-color="#8AB458"/>
+              <stop offset="100%" stop-color="#609038"/>
+            </radialGradient>
+            <linearGradient id="stemG" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="#88B855"/>
+              <stop offset="100%" stop-color="#5A8830"/>
+            </linearGradient>
+            <filter id="pShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(180,80,120,.15)"/>
+            </filter>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
           </defs>
-          <path class="stem-main" d="M150,195 Q148,165 150,140 Q152,115 150,95" stroke="#9AB878" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path class="branch-left" d="M150,155 Q128,151 108,149 Q90,148 72,144" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path class="leaf" style="animation-delay:1.2s;" d="M90,148 Q78,135 70,122 Q85,130 95,143Z" fill="url(#rlg)" opacity=".8"/>
-          <path class="branch-right" d="M150,138 Q172,133 192,130 Q210,128 228,124" stroke="#9AB878" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path class="leaf" style="animation-delay:1.6s;" d="M210,130 Q222,117 230,103 Q218,115 205,126Z" fill="url(#rlg)" opacity=".75"/>
-          <g class="bud" transform="translate(228,112)">
-            <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp3)" opacity=".8" transform="rotate(0,0,0)"/>
-            <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp2)" opacity=".8" transform="rotate(72,0,0)"/>
-            <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp3)" opacity=".8" transform="rotate(144,0,0)"/>
-            <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp2)" opacity=".8" transform="rotate(216,0,0)"/>
-            <ellipse cx="0" cy="-8" rx="4" ry="6.5" fill="url(#rp3)" opacity=".8" transform="rotate(288,0,0)"/>
-            <circle cx="0" cy="0" r="5" fill="url(#rcg)"/>
+
+          <!-- STEM -->
+          <g id="fStem">
+            <path d="M140,310 C138,280 136,250 138,220 C140,195 142,175 140,155"
+              stroke="url(#stemG)" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <!-- Stem texture lines -->
+            <path d="M139,290 C137,270 136,255 138,235" stroke="rgba(80,140,30,.3)" stroke-width="1.5" fill="none"/>
           </g>
-          <g transform="translate(150,75)">
-            <g class="bloom-petal" style="--base-rot:0deg;--bloom-del:2.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:45deg;--bloom-del:2.15s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:90deg;--bloom-del:2.3s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:135deg;--bloom-del:2.45s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:180deg;--bloom-del:2.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:225deg;--bloom-del:2.75s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:270deg;--bloom-del:2.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp1)" opacity=".72"/></g>
-            <g class="bloom-petal" style="--base-rot:315deg;--bloom-del:3.05s;transform-origin:0px 0px;"><ellipse cx="0" cy="-26" rx="11" ry="20" fill="url(#rp2)" opacity=".72"/></g>
-            <g class="bloom-inner" style="--base-rot:22.5deg;--bloom-del:2.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:67.5deg;--bloom-del:2.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:112.5deg;--bloom-del:3.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:157.5deg;--bloom-del:3.1s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:202.5deg;--bloom-del:2.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:247.5deg;--bloom-del:3.2s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:292.5deg;--bloom-del:3.3s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp3)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:337.5deg;--bloom-del:3.4s;transform-origin:0px 0px;"><ellipse cx="0" cy="-20" rx="8.5" ry="16" fill="url(#rp2)" opacity=".85"/></g>
-            <g class="bloom-inner" style="--base-rot:0deg;--bloom-del:3.5s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:60deg;--bloom-del:3.6s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:120deg;--bloom-del:3.7s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:180deg;--bloom-del:3.8s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:240deg;--bloom-del:3.9s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-inner" style="--base-rot:300deg;--bloom-del:4.0s;transform-origin:0px 0px;"><ellipse cx="0" cy="-14" rx="6" ry="11" fill="url(#rp3)" opacity=".92"/></g>
-            <g class="bloom-center">
-              <circle cx="0" cy="0" r="16" fill="url(#rcg)"/>
-              <circle cx="0" cy="0" r="10" fill="#F5DCC0" opacity=".9"/>
-              <circle cx="-3" cy="-3" r="4" fill="rgba(255,248,235,.65)"/>
-              <g stroke="#C8986A" stroke-width=".9" opacity=".75">
-                <line x1="0" y1="-9" x2="0" y2="-14"/><circle cx="0" cy="-15" r="1.8" fill="#D4A870"/>
-                <line x1="7" y1="-6" x2="10" y2="-11"/><circle cx="11" cy="-12" r="1.5" fill="#D4A870"/>
-                <line x1="-7" y1="-6" x2="-10" y2="-11"/><circle cx="-11" cy="-12" r="1.5" fill="#D4A870"/>
-                <line x1="9" y1="2" x2="13" y2="5"/><circle cx="14" cy="6" r="1.3" fill="#D4A870"/>
-                <line x1="-9" y1="2" x2="-13" y2="5"/><circle cx="-14" cy="6" r="1.3" fill="#D4A870"/>
-              </g>
+
+          <!-- LEFT BRANCH + LEAF -->
+          <g id="fBranchL">
+            <path d="M139,245 C120,240 102,238 84,234"
+              stroke="url(#stemG)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Leaf -->
+            <path d="M84,234 C68,220 62,205 72,195 C82,186 98,195 108,210 C118,224 112,236 100,240 C92,243 88,238 84,234Z"
+              fill="url(#lg1)" filter="url(#pShadow)"/>
+            <path d="M84,234 C78,224 74,212 78,202 C82,194 90,196 98,207"
+              stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
+            <!-- Leaf vein -->
+            <path d="M84,234 C88,222 96,212 100,202" stroke="rgba(80,140,30,.3)" stroke-width=".8" fill="none"/>
+          </g>
+
+          <!-- RIGHT BRANCH + LEAF -->
+          <g id="fBranchR">
+            <path d="M141,228 C160,222 178,218 196,212"
+              stroke="url(#stemG)" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Leaf -->
+            <path d="M196,212 C212,198 218,183 208,173 C198,164 182,173 172,188 C162,202 168,216 180,220 C188,223 192,218 196,212Z"
+              fill="url(#lg2)" filter="url(#pShadow)"/>
+            <path d="M196,212 C202,202 206,190 202,180 C198,172 190,174 182,185"
+              stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
+            <path d="M196,212 C192,200 184,190 180,180" stroke="rgba(80,140,30,.3)" stroke-width=".8" fill="none"/>
+          </g>
+
+          <!-- MAIN FLOWER — centered at (140, 120) -->
+          <g id="fFlower" transform="translate(140,120)">
+
+            <!-- Sepal / calyx at base -->
+            <path d="M0,40 Q-8,52 -14,58 Q-6,50 0,40Z" fill="#7AAA45" opacity=".7"/>
+            <path d="M0,40 Q8,52 14,58 Q6,50 0,40Z" fill="#6A9838" opacity=".7"/>
+            <path d="M0,40 Q-4,54 0,62 Q4,54 0,40Z" fill="#82B44E" opacity=".6"/>
+
+            <!-- OUTER PETALS — 5 large, natural shape -->
+            <!-- Petal 1 — top -->
+            <path id="p1" d="M0,0 C-14,-8 -22,-30 -16,-55 C-10,-78 2,-85 8,-72 C14,-58 8,-30 0,0Z"
+              fill="url(#pg1)" filter="url(#pShadow)" opacity=".9"/>
+            <path d="M0,0 C-6,-12 -10,-32 -8,-54" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+
+            <!-- Petal 2 — top right -->
+            <path id="p2" d="M0,0 C8,-6 28,-12 48,-4 C66,4 70,16 58,22 C46,28 24,16 0,0Z"
+              fill="url(#pg2)" filter="url(#pShadow)" opacity=".9"/>
+            <path d="M0,0 C12,-2 30,-4 46,2" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+
+            <!-- Petal 3 — bottom right -->
+            <path id="p3" d="M0,0 C6,8 16,28 10,50 C4,70 -8,75 -16,62 C-24,50 -14,26 0,0Z"
+              fill="url(#pg1)" filter="url(#pShadow)" opacity=".88"/>
+            <path d="M0,0 C4,12 8,30 4,50" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+
+            <!-- Petal 4 — bottom left -->
+            <path id="p4" d="M0,0 C-8,6 -28,14 -48,8 C-66,2 -70,-10 -58,-18 C-46,-26 -24,-14 0,0Z"
+              fill="url(#pg2)" filter="url(#pShadow)" opacity=".88"/>
+            <path d="M0,0 C-12,4 -30,6 -46,2" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+
+            <!-- Petal 5 — top left -->
+            <path id="p5" d="M0,0 C-10,-4 -28,-18 -36,-42 C-42,-62 -34,-75 -22,-70 C-10,-65 -4,-42 0,0Z"
+              fill="url(#pg3)" filter="url(#pShadow)" opacity=".85"/>
+
+            <!-- INNER PETALS — 5 smaller, overlapping -->
+            <path id="ip1" d="M0,0 C-6,-4 -10,-18 -6,-34 C-2,-48 6,-52 10,-42 C14,-32 8,-14 0,0Z"
+              fill="url(#pg3)" opacity=".92"/>
+            <path id="ip2" d="M0,0 C4,-2 14,-6 24,-2 C34,2 36,10 28,14 C20,18 10,8 0,0Z"
+              fill="url(#pg1)" opacity=".92"/>
+            <path id="ip3" d="M0,0 C2,4 4,14 0,26 C-4,36 -12,38 -16,30 C-20,22 -10,10 0,0Z"
+              fill="url(#pg2)" opacity=".9"/>
+            <path id="ip4" d="M0,0 C-4,2 -14,6 -22,2 C-30,-2 -30,-10 -22,-14 C-14,-18 -6,-8 0,0Z"
+              fill="url(#pg3)" opacity=".9"/>
+            <path id="ip5" d="M0,0 C-4,-4 -12,-16 -8,-30 C-4,-42 4,-44 8,-36 C12,-28 6,-12 0,0Z"
+              fill="url(#pg1)" opacity=".88"/>
+
+            <!-- CENTER disc -->
+            <circle cx="0" cy="0" r="18" fill="url(#cg)" filter="url(#glow)"/>
+            <circle cx="0" cy="0" r="12" fill="#F8E8A8" opacity=".9"/>
+            <circle cx="-3" cy="-3" r="5" fill="rgba(255,252,235,.75)"/>
+            <!-- Texture dots on center -->
+            <circle cx="5" cy="-4" r="1.5" fill="rgba(180,130,50,.4)"/>
+            <circle cx="-6" cy="3" r="1.5" fill="rgba(180,130,50,.4)"/>
+            <circle cx="2" cy="6" r="1.5" fill="rgba(180,130,50,.4)"/>
+            <!-- Stamens -->
+            <g stroke="#C89040" stroke-width="1" stroke-linecap="round" opacity=".8">
+              <line x1="0" y1="-10" x2="0" y2="-16"/><circle cx="0" cy="-17" r="2.2" fill="#E0AA50"/>
+              <line x1="8" y1="-6" x2="12" y2="-11"/><circle cx="13" cy="-12" r="1.8" fill="#E0AA50"/>
+              <line x1="10" y1="2" x2="15" y2="4"/><circle cx="16" cy="5" r="1.8" fill="#DCA048"/>
+              <line x1="4" y1="9" x2="5" y2="14"/><circle cx="5" cy="15" r="1.8" fill="#E0AA50"/>
+              <line x1="-6" y1="8" x2="-9" y2="13"/><circle cx="-10" cy="14" r="1.8" fill="#DCA048"/>
+              <line x1="-10" y1="1" x2="-15" y2="3"/><circle cx="-16" cy="4" r="1.6" fill="#E0AA50"/>
+              <line x1="-9" y1="-6" x2="-13" y2="-10"/><circle cx="-14" cy="-11" r="1.6" fill="#DCA048"/>
             </g>
           </g>
         </svg>
-        </div>
       </div>
-      <div class="qr-block">
+
+      <div class="qr-block">      <div class="qr-block">
         <div class="qr-wrap">
           <div class="qr-bow">🎀</div>
           <div class="qr-title">Rena'ya<br>bir not bırak</div>
@@ -471,136 +688,7 @@ function spawnNote(isim,mesaj,foto){
     s.appendChild(g);return s;
   }
 
-  // Spitz SVG — refined fluffy silhouette
-  function spitzSVG(direction){
-    var flip = direction === 'left';
-    // Build as HTML string for cleaner SVG
-    var c1 = 'rgba(220,185,160,0.6)';  // main fur
-    var c2 = 'rgba(200,160,135,0.55)'; // shading
-    var c3 = 'rgba(80,50,30,0.65)';    // dark details
-    var nose_c = 'rgba(60,35,20,0.7)';
-
-    var transform = flip ? 'transform="scale(-1,1) translate(-90,0)"' : '';
-
-    var svg = '<svg viewBox="0 0 90 56" xmlns="http://www.w3.org/2000/svg" style="width:min(9vw,90px);height:auto;display:block;">' +
-      '<g ' + transform + '>' +
-
-      // Curled tail (behind body, draw first)
-      '<path d="M22,30 Q8,22 6,12 Q5,4 13,6 Q20,8 18,18 Q16,25 22,30Z" fill="'+c1+'"/>' +
-      '<ellipse cx="10" cy="7" rx="6" ry="5" fill="'+c1+'"/>' +
-      '<path d="M22,30 Q9,24 8,14 Q7,7 13,8" stroke="'+c2+'" stroke-width="1" fill="none"/>' +
-
-      // Body — fluffy, slightly raised back
-      '<ellipse cx="42" cy="34" rx="24" ry="15" fill="'+c1+'"/>' +
-      // Chest fluff
-      '<ellipse cx="58" cy="30" rx="12" ry="11" fill="'+c1+'"/>' +
-      // Back fluff texture
-      '<path d="M20,28 Q30,22 42,24 Q54,22 62,26" stroke="'+c2+'" stroke-width="1.2" fill="none" opacity="0.5"/>' +
-
-      // Front legs
-      '<rect x="56" y="40" width="6" height="12" rx="3" fill="'+c1+'"/>' +
-      '<rect x="64" y="41" width="5" height="11" rx="2.5" fill="'+c2+'"/>' +
-      // Back legs
-      '<rect x="30" y="41" width="6" height="11" rx="3" fill="'+c1+'"/>' +
-      '<rect x="38" y="42" width="5" height="10" rx="2.5" fill="'+c2+'"/>' +
-      // Paws
-      '<ellipse cx="59" cy="52" rx="4" ry="2.5" fill="'+c2+'"/>' +
-      '<ellipse cx="67" cy="52" rx="3.5" ry="2.2" fill="'+c2+'"/>' +
-      '<ellipse cx="33" cy="52" rx="4" ry="2.5" fill="'+c2+'"/>' +
-      '<ellipse cx="41" cy="52" rx="3.5" ry="2.2" fill="'+c2+'"/>' +
-
-      // Neck ruff — Spitz has big fluffy ruff
-      '<ellipse cx="62" cy="26" rx="11" ry="10" fill="'+c1+'"/>' +
-      '<ellipse cx="63" cy="24" rx="9" ry="8" fill="rgba(235,205,185,0.55)"/>' +
-
-      // Head
-      '<ellipse cx="72" cy="18" rx="11" ry="10" fill="'+c1+'"/>' +
-      // Head shading
-      '<ellipse cx="70" cy="17" rx="7" ry="6" fill="rgba(235,205,185,0.45)"/>' +
-
-      // Ears — pointy Spitz ears
-      '<path d="M65,12 L67,2 L73,10Z" fill="'+c1+'"/>' +
-      '<path d="M73,10 L77,2 L81,10Z" fill="'+c1+'"/>' +
-      '<path d="M66,12 L68,4 L72,10Z" fill="rgba(200,155,135,0.5)"/>' +
-      '<path d="M74,10 L77,4 L80,10Z" fill="rgba(200,155,135,0.5)"/>' +
-
-      // Snout — narrow pointed
-      '<ellipse cx="81" cy="21" rx="6" ry="4.5" fill="'+c1+'"/>' +
-      '<path d="M79,20 Q82,18 84,20 Q82,23 79,20Z" fill="rgba(235,205,185,0.5)"/>' +
-
-      // Nose
-      '<ellipse cx="85" cy="19" rx="2.5" ry="1.8" fill="'+nose_c+'"/>' +
-      // Mouth
-      '<path d="M84,21 Q85,23 86,21" stroke="'+c3+'" stroke-width="0.8" fill="none"/>' +
-
-      // Eye — bright with highlight
-      '<circle cx="75" cy="15" r="2.8" fill="'+c3+'"/>' +
-      '<circle cx="74" cy="14" r="1" fill="rgba(255,255,255,0.7)"/>' +
-
-      '</g></svg>';
-
-    var wrap = document.createElement('div');
-    wrap.innerHTML = svg;
-    return wrap.firstChild;
-  }
-
-  // Run spitz across screen
-  function runSpitz(){
-    var W=window.innerWidth, H=window.innerHeight;
-    var fromRight = Math.random() > 0.5;
-    var startX = fromRight ? W + 100 : -120;
-    var endX   = fromRight ? -140 : W + 120;
-    var y = H * (0.58 + Math.random() * 0.25);
-    var dur = 5 + Math.random() * 3;
-
-    var wrap = document.createElement('div');
-    // Use keyframe animation for smooth run + bounce
-    var keyframeName = 'spitzMove_' + Date.now();
-    var styleEl = document.createElement('style');
-    styleEl.textContent = '@keyframes ' + keyframeName + '{' +
-      '0%{left:'+startX+'px;top:'+y+'px;}' +
-      '15%{top:'+(y-4)+'px;}25%{top:'+y+'px;}' +
-      '40%{top:'+(y-5)+'px;}50%{top:'+y+'px;}' +
-      '65%{top:'+(y-4)+'px;}75%{top:'+y+'px;}' +
-      '90%{top:'+(y-3)+'px;}100%{left:'+endX+'px;top:'+y+'px;}' +
-    '}';
-    document.head.appendChild(styleEl);
-
-    wrap.style.cssText = 'position:absolute;top:'+y+'px;left:'+startX+'px;opacity:0;transition:opacity 0.6s ease;animation:'+keyframeName+' '+dur+'s linear forwards;';
-    wrap.appendChild(spitzSVG(fromRight ? 'left' : 'right'));
-    ov.appendChild(wrap);
-
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      wrap.style.opacity = '0.72';
-    });});
-
-    // Leave paw prints as it passes
-    var steps = 6;
-    for(var i=0;i<steps;i++){
-      (function(idx){
-        var elapsed = (dur * 1000) * (idx / steps);
-        var px = startX + (endX - startX) * (idx / steps);
-        setTimeout(function(){
-          var pw = document.createElement('div');
-          pw.style.cssText = 'position:absolute;left:'+px+'px;top:'+(y+10)+'px;transform:rotate('+(fromRight?180:0)+'deg);opacity:0;transition:opacity 0.4s ease;';
-          pw.appendChild(paw(idx%2===0));
-          ov.appendChild(pw);
-          requestAnimationFrame(function(){requestAnimationFrame(function(){ pw.style.opacity='0.5'; });});
-          setTimeout(function(){ pw.style.transition='opacity 2s ease'; pw.style.opacity='0'; setTimeout(function(){ if(pw.parentNode)pw.remove(); },2100); }, 2500);
-        }, elapsed);
-      })(i);
-    }
-
-    setTimeout(function(){
-      if(wrap.parentNode) wrap.remove();
-      if(styleEl.parentNode) styleEl.remove();
-    }, (dur+1)*1000);
-  }
-
-  // Run every 20-35 seconds
-  setTimeout(function(){ runSpitz(); setInterval(runSpitz, 22000+Math.random()*13000); }, 5000);
-
-  // Also keep paw prints walking (instead of hand prints)
+// Also keep paw prints walking (instead of hand prints)
   function foot(flip){
     var s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 32 36');s.setAttribute('width','12');s.setAttribute('height','13');
     var ns='http://www.w3.org/2000/svg',g=document.createElementNS(ns,'g');
