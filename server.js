@@ -489,7 +489,7 @@ var count=0;
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 var _COLS=[{left:1,lastBottom:-999},{left:26,lastBottom:-999},{left:51,lastBottom:-999},{left:76,lastBottom:-999}];
 var _noteQueue=[];
-var _NOTE_H_VH=22,_NOTE_GAP=8;
+var _NOTE_H_VH=22,_NOTE_GAP=14;
 function getBestCol(){var best=null,bestScore=-Infinity;_COLS.forEach(function(col){var score=-col.lastBottom;if(score>bestScore){bestScore=score;best=col;}});return best;}
 function canLaunch(col){return col.lastBottom<(_NOTE_H_VH+_NOTE_GAP);}
 function launchNote(isim,mesaj,foto){
@@ -501,11 +501,13 @@ function launchNote(isim,mesaj,foto){
   var fHtml=foto?'<img class="nc-foto" src="'+foto+'" alt=""/>':'';
   el.innerHTML=fHtml+'<div class="nc-name">'+esc(isim)+'</div><div class="nc-msg">'+esc(mesaj)+'</div>';
   document.getElementById('notes').appendChild(el);
-  col.lastBottom=startTop+_NOTE_H_VH;
+  // Fotoğraflı notlar daha uzun — dinamik yükseklik
+  var noteH = foto ? 52 : 30; // worst case: max photo + 160 chars
+  col.lastBottom=startTop+noteH;
   var speed=130/16,startTime=Date.now();
   var tracker=setInterval(function(){
     var elapsed=(Date.now()-startTime)/1000;
-    col.lastBottom=startTop+_NOTE_H_VH+speed*elapsed;
+    col.lastBottom=startTop+noteH+speed*elapsed;
     if(col.lastBottom>110){clearInterval(tracker);col.lastBottom=-999;}
   },200);
   setTimeout(function(){
