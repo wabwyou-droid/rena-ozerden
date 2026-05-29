@@ -202,9 +202,9 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .petal{position:absolute;border-radius:50%;animation:petalOut var(--pd,1.4s) ease-out forwards;}
 @keyframes petalOut{0%{transform:translate(0,0);opacity:1;}100%{transform:translate(var(--tx),var(--ty)) scale(.2);opacity:0;}}
 #notes{position:absolute;z-index:10;pointer-events:none;overflow:hidden;top:0;bottom:0;left:33.33%;right:0;}
-.nc{position:absolute;background:rgba(255,253,250,.97);border:1px solid rgba(200,165,140,.28);padding:.8vw 1vw;width:15vw;max-width:15vw;overflow:hidden;box-sizing:border-box;box-shadow:0 4px 20px rgba(140,100,70,.1);animation:ncFall var(--fall-dur) linear forwards;opacity:0;}
+.nc{position:absolute;background:rgba(255,253,250,.97);border:1px solid rgba(200,165,140,.28);padding:.8vw 1vw;width:15vw;max-width:15vw;height:32vw;overflow:hidden;box-sizing:border-box;box-shadow:0 4px 20px rgba(140,100,70,.1);animation:ncFall var(--fall-dur) linear forwards;opacity:0;}
 @keyframes ncFall{0%{opacity:0;transform:translateY(-140px) rotate(var(--r));}4%{opacity:1;}92%{opacity:1;transform:translateY(var(--fall-dist)) rotate(var(--r));}100%{opacity:0;transform:translateY(var(--fall-dist)) rotate(var(--r));}}
-.nc-foto{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;margin-bottom:.5vw;border-radius:1px;}
+.nc-foto{width:100%;height:18vw;object-fit:cover;display:block;margin-bottom:.5vw;border-radius:1px;flex-shrink:0;}
 .nc-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(14px,1.7vw,27px);color:#5A3518;letter-spacing:.02em;margin-bottom:.4vw;word-break:break-word;overflow-wrap:break-word;}
 .nc-msg{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:clamp(13px,1.45vw,23px);color:#6A4525;line-height:1.5;word-break:break-word;overflow-wrap:break-word;}
 .toast{position:fixed;top:3vw;left:50%;transform:translateX(-50%);z-index:60;white-space:nowrap;background:rgba(255,252,248,.97);border:1px solid rgba(200,168,136,.3);padding:.5vw 1.8vw;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(10px,1vw,16px);color:#8A6040;animation:toastAnim 4s ease forwards;pointer-events:none;}
@@ -487,41 +487,48 @@ document.getElementById('canvas').addEventListener('click',function(e){
 // NOTES — 4 columns, position-tracked, no overlap
 var count=0;
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-// 4 columns — train system: each note placed exactly below the previous one
-// startTop of next = startTop of prev + noteH + gap (sabit aralık)
-// Aynı hız → aralık hiç değişmez → hiç binme olmaz
-var FALL_SPEED = 7.5;   // vh per second — sabit hız
-var FALL_GAP   = 5;     // vh gap between notes in same column
+// 4 columns — round-robin + FIXED card height = zero overlap guaranteed
+var FALL_SPEED  = 7.5;   // vh/s
+var CARD_H_VW   = 32;    // matches CSS height:32vw
+var GAP_VW      = 3;     // gap between cards in vw
+var _colIdx     = 0;     // round-robin index
 var _COLS = [
-  {left:1,  tailTop:-22}, // tailTop: where the BOTTOM of the last note starts
-  {left:26, tailTop:-22},
-  {left:51, tailTop:-22},
-  {left:76, tailTop:-22}
+  {left:1},
+  {left:26},
+  {left:51},
+  {left:76}
 ];
 var _noteQueue = [];
 
-function getBestCol(){
-  // Pick column whose tail is highest (most room above viewport)
-  var best=null, bestTop=Infinity;
-  _COLS.forEach(function(col){
-    if(col.tailTop < bestTop){ bestTop=col.tailTop; best=col; }
-  });
-  return best;
+// Each column independently tracks its next startTop
+var _colTail = [-22, -22, -22, -22]; // current tail position per column (in vh equiv)
+
+function vwToVh(vw){
+  // convert vw to vh using aspect ratio
+  return vw * (window.innerWidth / window.innerHeight);
 }
 
-function launchNote(isim,mesaj,foto){
-  var col = getBestCol();
-  var el  = document.createElement('div'); el.className='nc';
+function launchNote(isim, mesaj, foto){
+  // Round-robin: always use next column
+  var colI = _colIdx % 4;
+  _colIdx++;
+  var col = _COLS[colI];
 
-  // Place note so its TOP is exactly gap below column's current tail
-  var startTop = col.tailTop + FALL_GAP;
+  var cardH = vwToVh(CARD_H_VW);  // card height in vh
+  var gap   = vwToVh(GAP_VW);
 
-  // Calculate travel distance so note exits screen bottom (100vh) from startTop
-  var fallDist = 100 - startTop + 22; // enough to fully exit
+  // Place this note right after the tail of this column
+  var startTop = _colTail[colI] + gap;
 
+  // If tail is already below screen, start from just above screen
+  if(startTop > 110) startTop = -cardH - gap;
+
+  var fallDist = 120 - startTop; // travel to exit bottom
+  var fallDur  = fallDist / FALL_SPEED;
+
+  var el = document.createElement('div'); el.className = 'nc';
   el.style.cssText = 'left:'+col.left+'%;top:'+startTop+'vh;' +
-    '--r:0deg;--fall-dist:'+fallDist+'vh;' +
-    '--fall-dur:'+(fallDist/FALL_SPEED).toFixed(1)+'s;';
+    '--r:0deg;--fall-dist:'+fallDist+'vh;--fall-dur:'+fallDur.toFixed(1)+'s;';
 
   var fHtml = foto ? '<img class="nc-foto" src="'+foto+'" alt=""/>' : '';
   el.innerHTML = fHtml +
@@ -529,48 +536,64 @@ function launchNote(isim,mesaj,foto){
     '<div class="nc-msg">'+esc(mesaj)+'</div>';
   document.getElementById('notes').appendChild(el);
 
-  // Measure real height in vh
-  var vh    = window.innerHeight / 100;
-  var noteH = el.getBoundingClientRect().height / vh;
-  if(foto && noteH < 45) noteH = 55;   // image not loaded yet — safe fallback
-  if(!foto && noteH < 15) noteH = 28;
+  // Update this column's tail
+  _colTail[colI] = startTop + cardH;
 
-  // Update column tail: bottom of this note = startTop + noteH
-  col.tailTop = startTop + noteH;
-
-  // Advance the column's tail position over time (it moves at FALL_SPEED)
-  // We use a single rAF loop per column to keep tailTop in sync
+  // Track tail movement with rAF
   var launched = Date.now();
+  var initialTail = _colTail[colI];
   (function tick(){
     var elapsed = (Date.now() - launched) / 1000;
-    col.tailTop  = (startTop + noteH) - FALL_SPEED * elapsed;
-    if(col.tailTop > 110) col.tailTop = -22; // reset when fully off screen
-    else requestAnimationFrame(tick);
+    var current = initialTail - FALL_SPEED * elapsed;
+    _colTail[colI] = current;
+    if(current < -cardH - 10) return; // fully gone, stop tracking
+    requestAnimationFrame(tick);
   })();
 
-  // Remove DOM node when off screen
-  var exitMs = ((fallDist + noteH) / FALL_SPEED) * 1000;
+  // Remove when off screen + requeue
   setTimeout(function(){
     if(el.parentNode) el.remove();
-    if(_noteQueue.length < 300) _noteQueue.push({isim:isim,mesaj:mesaj,foto:foto});
-    setTimeout(function(){
-      if(_noteQueue.length){ var n=_noteQueue.shift(); launchNote(n.isim,n.mesaj,n.foto); }
-    },100);
-  }, exitMs);
+    // Re-queue for infinite loop
+    if(_noteQueue.length < 300) _noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
+    // Eğer kuyruk durmuşsa yeniden başlat
+    if(!_queueRunning && _noteQueue.length) tryQueue();
+  }, fallDur * 1000 + 300);
 }
 
+var _queueRunning = false;
+
 function tryQueue(){
-  if(!_noteQueue.length) return;
-  var next = _noteQueue.shift();
-  launchNote(next.isim, next.mesaj, next.foto);
+  if(_queueRunning) return; // zaten çalışıyor, çift döngü önle
+  _queueRunning = true;
+  _driveQueue();
 }
+
+function _driveQueue(){
+  if(!_noteQueue.length){
+    _queueRunning = false;
+    return;
+  }
+  var n = _noteQueue.shift();
+  launchNote(n.isim, n.mesaj, n.foto);
+  // Bir sonraki notu ne zaman göndereceğimizi hesapla
+  // 4 kolon round-robin: her kolon için kart yüksekliği + boşluk kadar bekle
+  var cardH  = vwToVh(CARD_H_VW);
+  var gap    = vwToVh(GAP_VW);
+  var waitMs = Math.round(((cardH + gap) / FALL_SPEED) * 1000 / 4);
+  setTimeout(_driveQueue, waitMs);
+}
+
 function spawnNote(isim,mesaj,foto){
-  launchNote(isim,mesaj,foto);count++;
+  // Yeni not da kuyruğa girer — doğrudan launch OLMAZ
+  _noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
+  count++;
   var ct=document.getElementById('ct');if(ct)ct.textContent=count+' not';
   var t=document.createElement('div');t.className='toast';
   t.textContent=esc(isim)+' bir not bıraktı ♡';
   document.getElementById('canvas').appendChild(t);
   setTimeout(function(){if(t.parentNode)t.remove();},4200);
+  // Kuyruğu tetikle (sadece 1 not varsa başlat, çoksa zaten işleniyor)
+  if(!_queueRunning) tryQueue();
 }
 
 // SPITZ DOG running + paw prints
