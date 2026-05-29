@@ -487,45 +487,82 @@ document.getElementById('canvas').addEventListener('click',function(e){
 // NOTES — 4 columns, position-tracked, no overlap
 var count=0;
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-var _COLS=[{left:1,lastBottom:-999},{left:26,lastBottom:-999},{left:51,lastBottom:-999},{left:76,lastBottom:-999}];
-var _noteQueue=[];
-var _NOTE_H_VH=22,_NOTE_GAP=14;
-function getBestCol(){var best=null,bestScore=-Infinity;_COLS.forEach(function(col){var score=-col.lastBottom;if(score>bestScore){bestScore=score;best=col;}});return best;}
-function canLaunch(col){return col.lastBottom<(_NOTE_H_VH+_NOTE_GAP);}
-function launchNote(isim,mesaj,foto){
-  var col=getBestCol();
-  if(!canLaunch(col)){_noteQueue.push({isim:isim,mesaj:mesaj,foto:foto});return;}
-  var el=document.createElement('div');el.className='nc';
-  var fallDur=16,startTop=-20;
-  el.style.cssText='left:'+col.left+'%;top:'+startTop+'vh;--r:0deg;--fall-dist:130vh;--fall-dur:'+fallDur+'s;';
-  var fHtml=foto?'<img class="nc-foto" src="'+foto+'" alt=""/>':'';
-  el.innerHTML=fHtml+'<div class="nc-name">'+esc(isim)+'</div><div class="nc-msg">'+esc(mesaj)+'</div>';
-  document.getElementById('notes').appendChild(el);
-  // Gerçek yüksekliği ölç (px → vh)
-  var vh = window.innerHeight / 100;
-  var noteH = (el.getBoundingClientRect().height / vh) || (foto ? 52 : 30);
-  // Fotoğraf yüklenmeden önce ölçüldüyse güvenli minimum al
-  if (foto && noteH < 40) noteH = 52;
-  if (!foto && noteH < 18) noteH = 30;
-  col.lastBottom = startTop + noteH + 6; // +6 extra gap
-  var speed=130/16,startTime=Date.now();
-  var tracker=setInterval(function(){
-    var elapsed=(Date.now()-startTime)/1000;
-    col.lastBottom=startTop+noteH+6+speed*elapsed;
-    if(col.lastBottom>110){clearInterval(tracker);col.lastBottom=-999;}
-  },200);
-  setTimeout(function(){
-    clearInterval(tracker);col.lastBottom=-999;
-    if(el.parentNode)el.remove();
-    if(_noteQueue.length<200)_noteQueue.push({isim:isim,mesaj:mesaj,foto:foto});
-    setTimeout(tryQueue,100);
-  },fallDur*1000+200);
+// 4 columns — train system: each note placed exactly below the previous one
+// startTop of next = startTop of prev + noteH + gap (sabit aralık)
+// Aynı hız → aralık hiç değişmez → hiç binme olmaz
+var FALL_SPEED = 7.5;   // vh per second — sabit hız
+var FALL_GAP   = 5;     // vh gap between notes in same column
+var _COLS = [
+  {left:1,  tailTop:-22}, // tailTop: where the BOTTOM of the last note starts
+  {left:26, tailTop:-22},
+  {left:51, tailTop:-22},
+  {left:76, tailTop:-22}
+];
+var _noteQueue = [];
+
+function getBestCol(){
+  // Pick column whose tail is highest (most room above viewport)
+  var best=null, bestTop=Infinity;
+  _COLS.forEach(function(col){
+    if(col.tailTop < bestTop){ bestTop=col.tailTop; best=col; }
+  });
+  return best;
 }
+
+function launchNote(isim,mesaj,foto){
+  var col = getBestCol();
+  var el  = document.createElement('div'); el.className='nc';
+
+  // Place note so its TOP is exactly gap below column's current tail
+  var startTop = col.tailTop + FALL_GAP;
+
+  // Calculate travel distance so note exits screen bottom (100vh) from startTop
+  var fallDist = 100 - startTop + 22; // enough to fully exit
+
+  el.style.cssText = 'left:'+col.left+'%;top:'+startTop+'vh;' +
+    '--r:0deg;--fall-dist:'+fallDist+'vh;' +
+    '--fall-dur:'+(fallDist/FALL_SPEED).toFixed(1)+'s;';
+
+  var fHtml = foto ? '<img class="nc-foto" src="'+foto+'" alt=""/>' : '';
+  el.innerHTML = fHtml +
+    '<div class="nc-name">'+esc(isim)+'</div>' +
+    '<div class="nc-msg">'+esc(mesaj)+'</div>';
+  document.getElementById('notes').appendChild(el);
+
+  // Measure real height in vh
+  var vh    = window.innerHeight / 100;
+  var noteH = el.getBoundingClientRect().height / vh;
+  if(foto && noteH < 45) noteH = 55;   // image not loaded yet — safe fallback
+  if(!foto && noteH < 15) noteH = 28;
+
+  // Update column tail: bottom of this note = startTop + noteH
+  col.tailTop = startTop + noteH;
+
+  // Advance the column's tail position over time (it moves at FALL_SPEED)
+  // We use a single rAF loop per column to keep tailTop in sync
+  var launched = Date.now();
+  (function tick(){
+    var elapsed = (Date.now() - launched) / 1000;
+    col.tailTop  = (startTop + noteH) - FALL_SPEED * elapsed;
+    if(col.tailTop > 110) col.tailTop = -22; // reset when fully off screen
+    else requestAnimationFrame(tick);
+  })();
+
+  // Remove DOM node when off screen
+  var exitMs = ((fallDist + noteH) / FALL_SPEED) * 1000;
+  setTimeout(function(){
+    if(el.parentNode) el.remove();
+    if(_noteQueue.length < 300) _noteQueue.push({isim:isim,mesaj:mesaj,foto:foto});
+    setTimeout(function(){
+      if(_noteQueue.length){ var n=_noteQueue.shift(); launchNote(n.isim,n.mesaj,n.foto); }
+    },100);
+  }, exitMs);
+}
+
 function tryQueue(){
-  if(!_noteQueue.length)return;
-  var col=getBestCol();
-  if(!canLaunch(col)){setTimeout(tryQueue,500);return;}
-  var next=_noteQueue.shift();launchNote(next.isim,next.mesaj,next.foto);
+  if(!_noteQueue.length) return;
+  var next = _noteQueue.shift();
+  launchNote(next.isim, next.mesaj, next.foto);
 }
 function spawnNote(isim,mesaj,foto){
   launchNote(isim,mesaj,foto);count++;
