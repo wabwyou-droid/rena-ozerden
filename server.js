@@ -175,185 +175,72 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
   97% {transform:scale(.05);opacity:0;}
   100%{transform:scale(0);opacity:0;}
 }
-/* ── FLOWER ANIMATION ── */
-.flower-wrap { width:92%; }
-.bloom-sway  { transform-origin:50% 98%; }
-
-/* Stem: draws upward */
-.fl-stem { stroke-dasharray:200; stroke-dashoffset:200; animation:drawStem 28s ease-in-out infinite; }
-@keyframes drawStem {
-  0%,2% { stroke-dashoffset:200; opacity:0; }
-  12%   { stroke-dashoffset:0;   opacity:1; }
-  80%   { stroke-dashoffset:0;   opacity:1; }
-  95%   { stroke-dashoffset:200; opacity:0; }
-  100%  { stroke-dashoffset:200; opacity:0; }
+/* ── DALİ ÇİÇEK ANİMASYONU ── */
+/* Stem — sinüs gibi büyür */
+#dStem{transform-origin:50% 100%;animation:dStemRise 26s cubic-bezier(.4,0,.1,1) infinite;}
+@keyframes dStemRise{0%,2%{opacity:0;transform:scaleY(0);}10%{opacity:1;transform:scaleY(1);}80%{opacity:1;}94%{opacity:0;transform:scaleY(.1);}100%{opacity:0;transform:scaleY(0);}}
+/* Sol yaprak — tabandan büyür, damlalar gecikmeli */
+#dLeafL{transform-origin:100% 50%;animation:dLeafGrow 26s ease-in-out infinite 1.2s;opacity:0;}
+@keyframes dLeafGrow{0%,2%{opacity:0;transform:scaleX(0);}9%{opacity:1;transform:scaleX(1);}80%{opacity:1;}94%{opacity:0;}100%{opacity:0;transform:scaleX(0);}}
+/* Yüzen serbest taç — sallanarak gelir */
+#dFloatPetal{animation:dFloat 26s ease-in-out infinite 2s;opacity:0;}
+@keyframes dFloat{
+  0%,3%{opacity:0;transform:translate(0,20px) rotate(-15deg);}
+  10%{opacity:.75;transform:translate(0,0) rotate(0deg);}
+  40%{transform:translate(3px,-4px) rotate(2deg);}
+  60%{transform:translate(-3px,2px) rotate(-2deg);}
+  80%{opacity:.75;transform:translate(0,0) rotate(0deg);}
+  94%{opacity:0;transform:translate(10px,-15px) rotate(20deg);}
+  100%{opacity:0;}
 }
-/* Branches: draw outward */
-.fl-branch-l { stroke-dasharray:120; stroke-dashoffset:120; animation:drawBL 28s ease-in-out infinite 1s; }
-.fl-branch-r { stroke-dasharray:120; stroke-dashoffset:-120; animation:drawBR 28s ease-in-out infinite 1.5s; }
-@keyframes drawBL {
-  0%,2% { stroke-dashoffset:120; opacity:0; }
-  10%   { stroke-dashoffset:0;   opacity:1; }
-  80%   { stroke-dashoffset:0;   opacity:1; }
-  95%   { stroke-dashoffset:120; opacity:0; }
-  100%  { stroke-dashoffset:120; opacity:0; }
+/* Ana çiçek — her taç kökünden büyür */
+#dp_1{transform-origin:0% 100%;animation:dPetal 26s cubic-bezier(.3,0,.1,1) infinite 3.2s;opacity:0;}
+#dp_2{transform-origin:0% 50%;animation:dPetal 26s cubic-bezier(.3,0,.1,1) infinite 3.7s;opacity:0;}
+#dp_3{transform-origin:50% 0%;animation:dPetal 26s cubic-bezier(.3,0,.1,1) infinite 4.2s;opacity:0;}
+#dp_4{transform-origin:100% 50%;animation:dPetal 26s cubic-bezier(.3,0,.1,1) infinite 4.7s;opacity:0;}
+#dp_5{transform-origin:100% 100%;animation:dPetal 26s cubic-bezier(.3,0,.1,1) infinite 5.2s;opacity:0;}
+@keyframes dPetal{
+  0%,1%{opacity:0;transform:scale(0) rotate(-20deg);}
+  7%{opacity:1;transform:scale(1.1) rotate(3deg);}
+  11%{opacity:1;transform:scale(.97) rotate(-1deg);}
+  14%{opacity:1;transform:scale(1) rotate(0deg);}
+  55%{transform:scale(1) rotate(0deg);}
+  59%{transform:scale(1.05) rotate(2deg);}
+  63%{transform:scale(.98) rotate(0deg);}
+  80%{opacity:1;}93%{opacity:0;transform:scale(.1) rotate(15deg);}100%{opacity:0;}
 }
-@keyframes drawBR {
-  0%,2% { stroke-dashoffset:-120; opacity:0; }
-  10%   { stroke-dashoffset:0;    opacity:1; }
-  80%   { stroke-dashoffset:0;    opacity:1; }
-  95%   { stroke-dashoffset:-120; opacity:0; }
-  100%  { stroke-dashoffset:-120; opacity:0; }
+/* Damla animasyonları — yer çekimine karşı aşağı akar */
+#drip1,#drip2,#drip3{opacity:0;animation:dDrip 26s ease-in-out infinite;}
+#drip1{animation-delay:5.5s;}#drip2{animation-delay:5.8s;}#drip3{animation-delay:6.1s;}
+@keyframes dDrip{
+  0%,10%{opacity:0;transform:scaleY(0);transform-origin:50% 0%;}
+  16%{opacity:.7;transform:scaleY(1);}
+  70%{opacity:.6;}80%{opacity:0;}100%{opacity:0;}
 }
-/* Leaves */
-.fl-leaf { transform-origin:100% 100%; animation:leafGrow 28s ease-in-out infinite; opacity:0; }
-@keyframes leafGrow {
-  0%,9%  { transform:scale(0) rotate(-20deg); opacity:0; }
-  16%    { transform:scale(1.08) rotate(2deg); opacity:0.85; }
-  19%    { transform:scale(0.97) rotate(0deg); opacity:0.82; }
-  80%    { transform:scale(1) rotate(0deg);    opacity:0.82; }
-  95%    { transform:scale(0) rotate(-10deg);  opacity:0; }
-  100%   { transform:scale(0);                 opacity:0; }
+/* İç taçlar */
+#dip1,#dip2,#dip3,#dip4,#dip5{opacity:0;}
+#dip1{animation:dInner 26s ease infinite 6.0s;}
+#dip2{animation:dInner 26s ease infinite 6.3s;}
+#dip3{animation:dInner 26s ease infinite 6.6s;}
+#dip4{animation:dInner 26s ease infinite 6.9s;}
+#dip5{animation:dInner 26s ease infinite 7.2s;}
+@keyframes dInner{
+  0%,1%{opacity:0;transform:scale(0);}6%{opacity:.9;transform:scale(1.08);}10%{opacity:.9;transform:scale(1);}
+  60%{transform:scale(1);}64%{transform:scale(1.06);}68%{transform:scale(1);}
+  80%{opacity:.9;}93%{opacity:0;transform:scale(0);}100%{opacity:0;}
 }
-.fl-leaf-r { transform-origin:0% 100%; animation:leafGrowR 28s ease-in-out infinite 0.5s; opacity:0; }
-@keyframes leafGrowR {
-  0%,9%  { transform:scale(0) rotate(20deg); opacity:0; }
-  16%    { transform:scale(1.08) rotate(-2deg); opacity:0.8; }
-  19%    { transform:scale(0.97) rotate(0deg);  opacity:0.78; }
-  80%    { transform:scale(1) rotate(0deg);     opacity:0.78; }
-  95%    { transform:scale(0) rotate(10deg);    opacity:0; }
-  100%   { transform:scale(0);                  opacity:0; }
-}
-/* Side bud */
-.fl-bud { transform-origin:50% 100%; animation:budOpen 28s ease-in-out infinite 1.8s; opacity:0; }
-@keyframes budOpen {
-  0%,12% { transform:scaleY(0) scaleX(0); opacity:0; }
-  19%    { transform:scaleY(1.06) scaleX(1.04); opacity:0.8; }
-  22%    { transform:scaleY(1) scaleX(1);       opacity:0.8; }
-  80%    { transform:scaleY(1) scaleX(1);       opacity:0.75; }
-  95%    { transform:scaleY(0) scaleX(0);       opacity:0; }
-  100%   { transform:scaleY(0) scaleX(0);       opacity:0; }
-}
-/* Main petals: each petal curls open from base */
-.fl-petal {
-  transform-origin: var(--px, 50%) var(--py, 100%);
-  animation: petalOpen 28s cubic-bezier(0.34,1.2,0.64,1) infinite;
-  animation-delay: var(--pd, 2s);
-  opacity:0;
-}
-@keyframes petalOpen {
-  0%,55%   { transform:rotate(var(--pr,0deg)) scale(0);    opacity:0; }
-  62%      { transform:rotate(var(--pr,0deg)) scale(1.12); opacity:1; }
-  66%      { transform:rotate(var(--pr,0deg)) scale(0.95); opacity:0.97; }
-  69%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
-  /* gentle heartbeat */
-  78%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
-  80%      { transform:rotate(var(--pr,0deg)) scale(1.03); opacity:1; }
-  82%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:1; }
-  92%      { transform:rotate(var(--pr,0deg)) scale(1.0);  opacity:0.9; }
-  98%      { transform:rotate(var(--pr,0deg)) scale(0.05); opacity:0; }
-  100%     { transform:rotate(var(--pr,0deg)) scale(0);    opacity:0; }
-}
-/* Center */
-.fl-center { transform-origin:50% 50%; animation:centerOpen 28s ease-in-out infinite 4.2s; opacity:0; }
-@keyframes centerOpen {
-  0%,55%  { transform:scale(0); opacity:0; }
-  62%     { transform:scale(1.3); opacity:1; }
-  67%     { transform:scale(0.92); opacity:1; }
-  70%     { transform:scale(1.0); opacity:1; }
-  78%     { transform:scale(1.0); opacity:1; }
-  80%     { transform:scale(1.1); opacity:1; filter:drop-shadow(0 0 5px rgba(255,210,180,.8)); }
-  84%     { transform:scale(1.0); opacity:1; filter:none; }
-  92%     { transform:scale(1.0); opacity:0.9; }
-  98%     { transform:scale(0.05); opacity:0; }
-  100%    { transform:scale(0); opacity:0; }
-}
-/* ── FLOWER ANIMATION ── */
-/* Stem: grows upward from root */
-#fStem{transform-origin:50% 100%;animation:stemRise 28s ease-in-out infinite;}
-@keyframes stemRise{
-  0%,2%{opacity:0;transform:scaleY(0);}
-  8%{opacity:1;transform:scaleY(1);}
-  82%{opacity:1;transform:scaleY(1);}
-  95%{opacity:0;transform:scaleY(.15);}
-  100%{opacity:0;transform:scaleY(0);}
-}
-/* Left branch: grows outward left */
-#fBranchL{transform-origin:100% 50%;animation:branchL 28s ease-in-out infinite 1s;}
-@keyframes branchL{
-  0%,5%{opacity:0;transform:scaleX(0);}
-  12%{opacity:1;transform:scaleX(1);}
-  82%{opacity:1;transform:scaleX(1);}
-  95%{opacity:0;transform:scaleX(0);}
-  100%{opacity:0;transform:scaleX(0);}
-}
-/* Right branch: grows outward right */
-#fBranchR{transform-origin:0% 50%;animation:branchR 28s ease-in-out infinite 1.5s;}
-@keyframes branchR{
-  0%,6%{opacity:0;transform:scaleX(0);}
-  13%{opacity:1;transform:scaleX(1);}
-  82%{opacity:1;transform:scaleX(1);}
-  95%{opacity:0;transform:scaleX(0);}
-  100%{opacity:0;transform:scaleX(0);}
-}
-/* Outer petals: each unfurls from center */
-#p1{transform-origin:0% 100%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.0s;}
-#p2{transform-origin:0% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.4s;}
-#p3{transform-origin:0% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 3.8s;}
-#p4{transform-origin:100% 0%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.2s;}
-#p5{transform-origin:100% 100%;animation:petalUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.6s;}
-@keyframes petalUnfurl{
-  0%,1%{opacity:0;transform:scale(0) rotate(-15deg);}
-  8%{opacity:1;transform:scale(1.06) rotate(2deg);}
-  13%{opacity:1;transform:scale(.98) rotate(-1deg);}
-  16%{opacity:1;transform:scale(1) rotate(0deg);}
-  /* Heartbeat at peak */
-  60%{transform:scale(1);}
-  63%{transform:scale(1.04);}
-  66%{transform:scale(.98);}
-  69%{transform:scale(1.02);}
-  72%{transform:scale(1);}
-  80%{opacity:1;transform:scale(1);}
-  93%{opacity:0;transform:scale(0) rotate(10deg);}
-  100%{opacity:0;transform:scale(0);}
-}
-/* Inner petals: slightly later */
-#ip1{transform-origin:50% 100%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 4.8s;}
-#ip2{transform-origin:0% 50%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.1s;}
-#ip3{transform-origin:50% 0%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.4s;}
-#ip4{transform-origin:100% 50%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 5.7s;}
-#ip5{transform-origin:50% 100%;animation:innerUnfurl 28s cubic-bezier(.4,0,.2,1) infinite 6.0s;}
-@keyframes innerUnfurl{
-  0%,1%{opacity:0;transform:scale(0);}
-  7%{opacity:1;transform:scale(1.08);}
-  11%{opacity:1;transform:scale(.97);}
-  14%{opacity:1;transform:scale(1);}
-  60%{transform:scale(1);}64%{transform:scale(1.05);}68%{transform:scale(1);}
-  80%{opacity:1;transform:scale(1);}
-  93%{opacity:0;transform:scale(0);}
-  100%{opacity:0;transform:scale(0);}
-}
-/* Center: last to open, glows at peak */
-#fFlower circle:first-of-type{animation:centerOpen 28s ease-in-out infinite 6.5s;}
-@keyframes centerOpen{
-  0%,1%{opacity:0;transform:scale(0);}
-  6%{opacity:1;transform:scale(1.15);}
-  10%{opacity:1;transform:scale(.94);}
-  13%{opacity:1;transform:scale(1);}
-  58%{transform:scale(1);filter:none;}
-  63%{transform:scale(1.1);filter:drop-shadow(0 0 6px rgba(248,200,80,.7));}
-  68%{transform:scale(1);filter:none;}
-  80%{opacity:1;}
-  93%{opacity:0;transform:scale(0);}
-  100%{opacity:0;transform:scale(0);}
-}
-/* Calyx/sepal: appear with stem */
-#fFlower path:nth-child(1),
-#fFlower path:nth-child(2),
-#fFlower path:nth-child(3){animation:sepalIn 28s ease infinite 2s;opacity:0;}
-@keyframes sepalIn{
-  0%,3%{opacity:0;transform:scale(0);}8%{opacity:.7;transform:scale(1);}
-  80%{opacity:.7;}93%{opacity:0;transform:scale(0);}100%{opacity:0;}
+/* Merkez — "göz" açılır son */
+#daliFlower ellipse:nth-of-type(1){animation:dCenter 26s ease-in-out infinite 7.8s;opacity:0;}
+@keyframes dCenter{
+  0%,1%{opacity:0;transform:scale(0) rotate(-12deg);}
+  6%{opacity:1;transform:scale(1.2) rotate(-12deg);}
+  10%{opacity:1;transform:scale(.96) rotate(-12deg);}
+  13%{opacity:1;transform:scale(1) rotate(-12deg);}
+  /* Göz kırpar */
+  50%{transform:scale(1) rotate(-12deg);}
+  53%{transform:scaleY(.1) rotate(-12deg);}
+  56%{transform:scale(1) rotate(-12deg);}
+  80%{opacity:1;}93%{opacity:0;transform:scale(0);}100%{opacity:0;}
 }
 
 .qr-block{text-align:center;}
@@ -406,155 +293,162 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
         <span class="title-ozerden">Özerden</span>
       </div>
       <div class="flower-wrap">
-        <svg id="flowerSvg" viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible;">
+        <svg id="daliFlower" viewBox="0 0 280 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;overflow:visible;">
           <defs>
-            <!-- Petal gradients - rich pink -->
-            <radialGradient id="pg1" cx="38%" cy="20%" r="70%">
-              <stop offset="0%" stop-color="#FDE8F0"/>
-              <stop offset="35%" stop-color="#F4AECA"/>
-              <stop offset="70%" stop-color="#E27EA8"/>
-              <stop offset="100%" stop-color="#C85A88"/>
+            <radialGradient id="dp1" cx="30%" cy="15%" r="75%">
+              <stop offset="0%" stop-color="#FEE8F4"/>
+              <stop offset="40%" stop-color="#F0A0CC"/>
+              <stop offset="100%" stop-color="#C0558A"/>
             </radialGradient>
-            <radialGradient id="pg2" cx="62%" cy="20%" r="70%">
-              <stop offset="0%" stop-color="#FEEAF2"/>
-              <stop offset="35%" stop-color="#F2A8C8"/>
-              <stop offset="70%" stop-color="#D870A0"/>
-              <stop offset="100%" stop-color="#BC5080"/>
+            <radialGradient id="dp2" cx="70%" cy="15%" r="75%">
+              <stop offset="0%" stop-color="#FDF0F8"/>
+              <stop offset="40%" stop-color="#E890C0"/>
+              <stop offset="100%" stop-color="#AA4578"/>
             </radialGradient>
-            <radialGradient id="pg3" cx="50%" cy="15%" r="65%">
-              <stop offset="0%" stop-color="#FFF0F6"/>
-              <stop offset="40%" stop-color="#F8C4D8"/>
-              <stop offset="100%" stop-color="#DC88B0"/>
+            <radialGradient id="dp3" cx="50%" cy="10%" r="70%">
+              <stop offset="0%" stop-color="#FFF4FA"/>
+              <stop offset="50%" stop-color="#F8C0DC"/>
+              <stop offset="100%" stop-color="#D870A8"/>
             </radialGradient>
-            <radialGradient id="cg" cx="40%" cy="30%" r="60%">
-              <stop offset="0%" stop-color="#FFF8E8"/>
-              <stop offset="50%" stop-color="#F5DCA0"/>
-              <stop offset="100%" stop-color="#D4A055"/>
+            <radialGradient id="dcg" cx="40%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#FFFBE8"/>
+              <stop offset="50%" stop-color="#F5D890"/>
+              <stop offset="100%" stop-color="#C89040"/>
             </radialGradient>
-            <radialGradient id="lg1" cx="25%" cy="25%" r="70%">
-              <stop offset="0%" stop-color="#D8EAB8"/>
-              <stop offset="60%" stop-color="#94BB60"/>
-              <stop offset="100%" stop-color="#6A9840"/>
+            <radialGradient id="dlg" cx="30%" cy="25%" r="70%">
+              <stop offset="0%" stop-color="#D8EAB0"/>
+              <stop offset="100%" stop-color="#6A9838"/>
             </radialGradient>
-            <radialGradient id="lg2" cx="75%" cy="25%" r="70%">
-              <stop offset="0%" stop-color="#D0E4B0"/>
-              <stop offset="60%" stop-color="#8AB458"/>
-              <stop offset="100%" stop-color="#609038"/>
-            </radialGradient>
-            <linearGradient id="stemG" x1="50%" y1="0%" x2="50%" y2="100%">
-              <stop offset="0%" stop-color="#88B855"/>
-              <stop offset="100%" stop-color="#5A8830"/>
-            </linearGradient>
-            <filter id="pShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(180,80,120,.15)"/>
+            <filter id="dMelt">
+              <feTurbulence type="turbulence" baseFrequency="0.015" numOctaves="3" result="noise" seed="2"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
             </filter>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            <filter id="dGlow">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="dDrop">
+              <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="rgba(160,60,100,.2)"/>
             </filter>
           </defs>
 
-          <!-- STEM -->
-          <g id="fStem">
-            <path d="M140,310 C138,280 136,250 138,220 C140,195 142,175 140,155"
-              stroke="url(#stemG)" stroke-width="5" fill="none" stroke-linecap="round"/>
-            <!-- Stem texture lines -->
-            <path d="M139,290 C137,270 136,255 138,235" stroke="rgba(80,140,30,.3)" stroke-width="1.5" fill="none"/>
+          <!-- SURREAL STEM — impossibly thin, curves against gravity -->
+          <g id="dStem">
+            <path d="M140,318 C142,290 130,265 145,240 C158,217 132,200 148,178 C162,158 138,148 140,130"
+              stroke="#7AAA40" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <!-- Shadow of stem that goes the wrong way -->
+            <path d="M143,318 C150,295 138,270 150,248 C160,228 140,210 152,192"
+              stroke="rgba(160,100,160,.15)" stroke-width="2" fill="none" stroke-linecap="round"/>
           </g>
 
-          <!-- LEFT BRANCH + LEAF -->
-          <g id="fBranchL">
-            <path d="M139,245 C120,240 102,238 84,234"
-              stroke="url(#stemG)" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- Leaf -->
-            <path d="M84,234 C68,220 62,205 72,195 C82,186 98,195 108,210 C118,224 112,236 100,240 C92,243 88,238 84,234Z"
-              fill="url(#lg1)" filter="url(#pShadow)"/>
-            <path d="M84,234 C78,224 74,212 78,202 C82,194 90,196 98,207"
-              stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
+          <!-- LEAF — melting downward, Dali style -->
+          <g id="dLeafL">
+            <path d="M142,248 C118,244 98,248 84,240
+                     C70,232 66,218 74,208
+                     C82,198 96,200 108,210
+                     C118,218 120,232 128,240
+                     C134,246 140,246 142,248Z"
+              fill="url(#dlg)" filter="url(#dDrop)"/>
+            <!-- Dripping tip -->
+            <path d="M74,210 Q68,225 66,238 Q68,240 72,234 Q74,224 76,215Z"
+              fill="#88B848" opacity=".6"/>
+            <path d="M84,240 Q76,255 74,268 Q77,270 80,262 Q82,252 86,244Z"
+              fill="#7AAA40" opacity=".5"/>
             <!-- Leaf vein -->
-            <path d="M84,234 C88,222 96,212 100,202" stroke="rgba(80,140,30,.3)" stroke-width=".8" fill="none"/>
+            <path d="M142,248 C125,238 105,228 88,220" stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
           </g>
 
-          <!-- RIGHT BRANCH + LEAF -->
-          <g id="fBranchR">
-            <path d="M141,228 C160,222 178,218 196,212"
-              stroke="url(#stemG)" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <!-- Leaf -->
-            <path d="M196,212 C212,198 218,183 208,173 C198,164 182,173 172,188 C162,202 168,216 180,220 C188,223 192,218 196,212Z"
-              fill="url(#lg2)" filter="url(#pShadow)"/>
-            <path d="M196,212 C202,202 206,190 202,180 C198,172 190,174 182,185"
-              stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
-            <path d="M196,212 C192,200 184,190 180,180" stroke="rgba(80,140,30,.3)" stroke-width=".8" fill="none"/>
+          <!-- FLOATING DETACHED PETAL — Dali signature -->
+          <g id="dFloatPetal">
+            <path d="M218,185 C228,170 232,150 224,138
+                     C216,126 204,128 198,140
+                     C192,152 196,170 206,180
+                     C210,184 215,186 218,185Z"
+              fill="url(#dp2)" opacity=".75" filter="url(#dMelt)"/>
+            <!-- Shadow below floating petal — impossible -->
+            <path d="M205,192 C210,196 218,196 222,192"
+              stroke="rgba(180,80,120,.2)" stroke-width="2" fill="none"/>
           </g>
 
-          <!-- MAIN FLOWER — centered at (140, 120) -->
-          <g id="fFlower" transform="translate(140,120)">
+          <!-- MAIN FLOWER — surreal proportions, melting at tips -->
+          <g id="dFlower" transform="translate(140,118)">
 
-            <!-- Sepal / calyx at base -->
-            <path d="M0,40 Q-8,52 -14,58 Q-6,50 0,40Z" fill="#7AAA45" opacity=".7"/>
-            <path d="M0,40 Q8,52 14,58 Q6,50 0,40Z" fill="#6A9838" opacity=".7"/>
-            <path d="M0,40 Q-4,54 0,62 Q4,54 0,40Z" fill="#82B44E" opacity=".6"/>
+            <!-- PETAL 1 — elongated impossibly, melting tip drips -->
+            <path id="dp_1" d="M0,0
+              C-6,-12 -10,-35 -8,-60
+              C-6,-82 2,-95 10,-90
+              C18,-84 16,-65 10,-42
+              C6,-22 2,-8 0,0Z"
+              fill="url(#dp1)" filter="url(#dDrop)"/>
+            <!-- Drip from tip -->
+            <path id="drip1" d="M2,-90 C3,-96 4,-106 3,-118 Q2,-122 1,-118 Q2,-108 1,-96 Q0,-90 2,-90Z"
+              fill="url(#dp1)" opacity=".7"/>
 
-            <!-- OUTER PETALS — 5 large, natural shape -->
-            <!-- Petal 1 — top -->
-            <path id="p1" d="M0,0 C-14,-8 -22,-30 -16,-55 C-10,-78 2,-85 8,-72 C14,-58 8,-30 0,0Z"
-              fill="url(#pg1)" filter="url(#pShadow)" opacity=".9"/>
-            <path d="M0,0 C-6,-12 -10,-32 -8,-54" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+            <!-- PETAL 2 — wider, baroque -->
+            <path id="dp_2" d="M0,0
+              C10,-4 32,-8 52,2
+              C70,12 74,28 62,36
+              C50,44 28,30 10,14
+              C4,8 1,3 0,0Z"
+              fill="url(#dp2)" filter="url(#dDrop)"/>
+            <path id="drip2" d="M62,36 C70,44 80,56 78,68 Q76,72 74,68 Q72,58 64,46 Q62,40 62,36Z"
+              fill="url(#dp2)" opacity=".65"/>
 
-            <!-- Petal 2 — top right -->
-            <path id="p2" d="M0,0 C8,-6 28,-12 48,-4 C66,4 70,16 58,22 C46,28 24,16 0,0Z"
-              fill="url(#pg2)" filter="url(#pShadow)" opacity=".9"/>
-            <path d="M0,0 C12,-2 30,-4 46,2" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+            <!-- PETAL 3 — drooping low, gravity-defying -->
+            <path id="dp_3" d="M0,0
+              C4,10 8,32 4,56
+              C0,78 -12,86 -20,76
+              C-28,66 -22,44 -12,22
+              C-8,12 -3,4 0,0Z"
+              fill="url(#dp3)" filter="url(#dDrop)"/>
+            <path id="drip3" d="M-20,76 C-24,86 -26,100 -22,112 Q-20,116 -18,112 Q-18,100 -16,88 Q-18,80 -20,76Z"
+              fill="url(#dp3)" opacity=".6"/>
 
-            <!-- Petal 3 — bottom right -->
-            <path id="p3" d="M0,0 C6,8 16,28 10,50 C4,70 -8,75 -16,62 C-24,50 -14,26 0,0Z"
-              fill="url(#pg1)" filter="url(#pShadow)" opacity=".88"/>
-            <path d="M0,0 C4,12 8,30 4,50" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+            <!-- PETAL 4 — stretches left, gossamer thin at base -->
+            <path id="dp_4" d="M0,0
+              C-4,4 -22,10 -44,6
+              C-64,2 -72,-10 -62,-20
+              C-52,-30 -32,-20 -14,-10
+              C-6,-6 -2,-2 0,0Z"
+              fill="url(#dp1)" filter="url(#dDrop)" opacity=".88"/>
 
-            <!-- Petal 4 — bottom left -->
-            <path id="p4" d="M0,0 C-8,6 -28,14 -48,8 C-66,2 -70,-10 -58,-18 C-46,-26 -24,-14 0,0Z"
-              fill="url(#pg2)" filter="url(#pShadow)" opacity=".88"/>
-            <path d="M0,0 C-12,4 -30,6 -46,2" stroke="rgba(255,220,235,.6)" stroke-width="1" fill="none"/>
+            <!-- PETAL 5 — tilted, asymmetric Dali twist -->
+            <path id="dp_5" d="M0,0
+              C-8,-6 -24,-22 -28,-48
+              C-32,-70 -22,-84 -10,-80
+              C2,-76 4,-55 2,-28
+              C2,-16 1,-6 0,0Z"
+              fill="url(#dp2)" filter="url(#dDrop)" opacity=".86"/>
 
-            <!-- Petal 5 — top left -->
-            <path id="p5" d="M0,0 C-10,-4 -28,-18 -36,-42 C-42,-62 -34,-75 -22,-70 C-10,-65 -4,-42 0,0Z"
-              fill="url(#pg3)" filter="url(#pShadow)" opacity=".85"/>
+            <!-- INNER ring — short, club-shaped -->
+            <path id="dip1" d="M0,0 C-2,-6 -4,-18 0,-28 C4,-36 10,-36 12,-28 C14,-20 8,-8 0,0Z" fill="url(#dp3)" opacity=".9"/>
+            <path id="dip2" d="M0,0 C6,-2 16,-2 22,4 C28,10 26,18 18,20 C10,22 4,12 0,0Z" fill="url(#dp1)" opacity=".9"/>
+            <path id="dip3" d="M0,0 C2,6 2,16 -4,22 C-10,28 -18,26 -20,18 C-22,10 -14,2 0,0Z" fill="url(#dp2)" opacity=".88"/>
+            <path id="dip4" d="M0,0 C-6,2 -16,0 -20,-6 C-24,-12 -20,-20 -12,-20 C-6,-20 -2,-10 0,0Z" fill="url(#dp3)" opacity=".88"/>
+            <path id="dip5" d="M0,0 C-2,-6 -2,-16 4,-20 C10,-24 18,-20 18,-12 C18,-4 8,0 0,0Z" fill="url(#dp1)" opacity=".86"/>
 
-            <!-- INNER PETALS — 5 smaller, overlapping -->
-            <path id="ip1" d="M0,0 C-6,-4 -10,-18 -6,-34 C-2,-48 6,-52 10,-42 C14,-32 8,-14 0,0Z"
-              fill="url(#pg3)" opacity=".92"/>
-            <path id="ip2" d="M0,0 C4,-2 14,-6 24,-2 C34,2 36,10 28,14 C20,18 10,8 0,0Z"
-              fill="url(#pg1)" opacity=".92"/>
-            <path id="ip3" d="M0,0 C2,4 4,14 0,26 C-4,36 -12,38 -16,30 C-20,22 -10,10 0,0Z"
-              fill="url(#pg2)" opacity=".9"/>
-            <path id="ip4" d="M0,0 C-4,2 -14,6 -22,2 C-30,-2 -30,-10 -22,-14 C-14,-18 -6,-8 0,0Z"
-              fill="url(#pg3)" opacity=".9"/>
-            <path id="ip5" d="M0,0 C-4,-4 -12,-16 -8,-30 C-4,-42 4,-44 8,-36 C12,-28 6,-12 0,0Z"
-              fill="url(#pg1)" opacity=".88"/>
-
-            <!-- CENTER disc -->
-            <circle cx="0" cy="0" r="18" fill="url(#cg)" filter="url(#glow)"/>
-            <circle cx="0" cy="0" r="12" fill="#F8E8A8" opacity=".9"/>
-            <circle cx="-3" cy="-3" r="5" fill="rgba(255,252,235,.75)"/>
-            <!-- Texture dots on center -->
-            <circle cx="5" cy="-4" r="1.5" fill="rgba(180,130,50,.4)"/>
-            <circle cx="-6" cy="3" r="1.5" fill="rgba(180,130,50,.4)"/>
-            <circle cx="2" cy="6" r="1.5" fill="rgba(180,130,50,.4)"/>
-            <!-- Stamens -->
-            <g stroke="#C89040" stroke-width="1" stroke-linecap="round" opacity=".8">
-              <line x1="0" y1="-10" x2="0" y2="-16"/><circle cx="0" cy="-17" r="2.2" fill="#E0AA50"/>
-              <line x1="8" y1="-6" x2="12" y2="-11"/><circle cx="13" cy="-12" r="1.8" fill="#E0AA50"/>
-              <line x1="10" y1="2" x2="15" y2="4"/><circle cx="16" cy="5" r="1.8" fill="#DCA048"/>
-              <line x1="4" y1="9" x2="5" y2="14"/><circle cx="5" cy="15" r="1.8" fill="#E0AA50"/>
-              <line x1="-6" y1="8" x2="-9" y2="13"/><circle cx="-10" cy="14" r="1.8" fill="#DCA048"/>
-              <line x1="-10" y1="1" x2="-15" y2="3"/><circle cx="-16" cy="4" r="1.6" fill="#E0AA50"/>
-              <line x1="-9" y1="-6" x2="-13" y2="-10"/><circle cx="-14" cy="-11" r="1.6" fill="#DCA048"/>
+            <!-- CENTER — egg-shaped, off-center, Dali surreal -->
+            <ellipse cx="2" cy="-2" rx="16" ry="20" fill="url(#dcg)" filter="url(#dGlow)" transform="rotate(-12,2,-2)"/>
+            <ellipse cx="0" cy="-3" rx="10" ry="13" fill="#F8E898" opacity=".88" transform="rotate(-12,0,-3)"/>
+            <!-- Surreal eye in center -->
+            <ellipse cx="2" cy="-2" rx="5" ry="6" fill="#E8D060" transform="rotate(-12,2,-2)"/>
+            <ellipse cx="2" cy="-2" rx="3" ry="3.5" fill="#5A3020" opacity=".8" transform="rotate(-12,2,-2)"/>
+            <circle cx="1" cy="-3" r="1.2" fill="rgba(255,255,255,.7)"/>
+            <!-- Stamens — extra long, swaying -->
+            <g stroke="#D09030" stroke-width="1.2" stroke-linecap="round" opacity=".85">
+              <path d="M0,-14 C2,-18 1,-24 0,-28"/><circle cx="0" cy="-29" r="2.5" fill="#E8B040"/>
+              <path d="M10,-8 C14,-12 18,-16 20,-20"/><circle cx="21" cy="-21" r="2" fill="#E8B040"/>
+              <path d="M12,4 C16,6 20,10 22,14"/><circle cx="23" cy="15" r="2" fill="#DCA040"/>
+              <path d="M4,12 C4,16 3,22 2,26"/><circle cx="2" cy="27" r="2" fill="#E8B040"/>
+              <path d="M-8,10 C-12,12 -16,16 -18,20"/><circle cx="-19" cy="21" r="2" fill="#DCA040"/>
+              <path d="M-12,0 C-16,-2 -20,-4 -24,-6"/><circle cx="-25" cy="-7" r="2" fill="#E8B040"/>
+              <path d="M-10,-10 C-14,-14 -16,-20 -16,-26"/><circle cx="-16" cy="-27" r="1.8" fill="#DCA040"/>
             </g>
           </g>
         </svg>
       </div>
 
-      <div class="qr-block">      <div class="qr-block">
+      <div class="qr-block">      <div class="qr-block">      <div class="qr-block">
         <div class="qr-wrap">
           <div class="qr-bow">🎀</div>
           <div class="qr-title">Rena'ya<br>bir not bırak</div>
