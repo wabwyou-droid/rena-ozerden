@@ -102,7 +102,7 @@ app.get('/', async (req, res) => {
     width: 180, margin: 1,
     color: { dark: '#1A0A00', light: '#FFFFFF' }
   });
-  const qrImg = '<img src="' + qrDataUrl + '" style="display:block;width:min(12vw,150px);height:min(12vw,150px);" alt="QR"/>';
+  const qrImg = "<img src='" + qrDataUrl + "' style='display:block;width:min(12vw,150px);height:min(12vw,150px);' alt='QR'/>";
 
   const html = `<!DOCTYPE html>
 <html lang="tr">
@@ -188,7 +188,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .qr-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:clamp(18px,2.6vw,40px);color:#7A5535;letter-spacing:.04em;line-height:1.35;}
 .qr-heart{font-size:clamp(8px,.9vw,13px);color:#C87888;margin-top:.2vw;opacity:.8;}
 .qr-frame{display:inline-block;background:#fff;padding:6px;border:1px solid rgba(200,168,136,.25);}
-.qr-frame img{display:block !important;width:min(12vw,150px) !important;height:min(12vw,150px) !important;}
+.qr-frame img,.qr-frame canvas{display:block !important;width:min(12vw,150px) !important;height:min(12vw,150px) !important;}
 .right-col{position:relative;overflow:hidden;}
 .col-line{position:absolute;top:0;bottom:0;width:1px;left:50%;background:linear-gradient(to bottom,transparent,rgba(200,168,136,.08) 20%,rgba(200,168,136,.08) 80%,transparent);z-index:1;pointer-events:none;}
 #snow{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
