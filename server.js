@@ -232,7 +232,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
         <span class="title-ozerden">Özerden</span>
       </div>
       <div class="flower-wrap">
-        <svg viewBox="0 0 260 310" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-height:42vh;overflow:visible;animation:flowerSway 6s ease-in-out infinite;transform-origin:50% 98%;">
+        <svg viewBox="0 0 260 310" xmlns="http://www.w3.org/2000/svg" style="width:70%;height:auto;max-height:32vh;overflow:visible;animation:flowerSway 6s ease-in-out infinite;transform-origin:50% 98%;">
           <defs>
             <!-- Deep layered petal gradients -->
             <radialGradient id="g_p_back" cx="50%" cy="85%" r="80%">
