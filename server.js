@@ -108,7 +108,11 @@ app.get('/', async (req, res) => {
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rena">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="color-scheme" content="light only">
 <title>Rena Özerden</title>
 <style>
@@ -116,11 +120,11 @@ app.get('/', async (req, res) => {
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#F5F0E8;color-scheme:light only;}
 body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
-.canvas{position:relative;width:100vw;height:56.25vw;max-height:100vh;max-width:177.78vh;overflow:hidden;background:#FAF6F0;}
+.canvas{overflow:hidden;background:#FAF5EE;width:1280px;height:720px;}
 .bg{position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;background:radial-gradient(ellipse 100% 100% at 20% 50%,#FFF8F2 0%,#F5EDE0 100%);}
 .grain{position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;pointer-events:none;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
 .canvas>*{position:relative;z-index:2;}
-.layout{position:absolute;inset:0;z-index:5;display:grid;grid-template-columns:33.33% 66.67%;}
+.layout{position:absolute;top:0;right:0;bottom:0;left:0;z-index:5;display:-webkit-flex;display:flex;-webkit-flex-direction:row;flex-direction:row;}
 .left-col{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:2vw 1.5vw;border-right:1px solid rgba(200,168,136,.15);height:100%;overflow:hidden;}
 .title-block{text-align:center;}
 .title-rena{font-family:Georgia,serif;font-style:italic;font-weight:300;font-size:36px;color:#7A5535;letter-spacing:.05em;line-height:1.2;display:block;text-align:center;}
@@ -189,7 +193,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .qr-heart{font-size:inherit;color:#C87888;margin-top:.2vw;opacity:.8;}
 .qr-frame{display:inline-block;background:#fff;padding:6px;border:1px solid rgba(200,168,136,.25);}
 .qr-frame img,.qr-frame canvas{display:block !important;width:130px !important;height:130px !important;}
-.right-col{position:relative;overflow:hidden;width:67%;height:100%;background:#FAF5EE;}
+.right-col{position:relative;overflow:hidden;width:860px;height:720px;background:#FAF5EE;}
 .col-line{position:absolute;top:0;bottom:0;width:1px;left:50%;background:linear-gradient(to bottom,transparent,rgba(200,168,136,.08) 20%,rgba(200,168,136,.08) 80%,transparent);z-index:1;pointer-events:none;}
 #snow{position:absolute;top:0;right:0;bottom:0;left:0;z-index:2;pointer-events:none;overflow:hidden;}
 .sp{position:absolute;top:-5vw;opacity:0;animation:spFall var(--dur) ease-in-out infinite var(--del);}
@@ -201,7 +205,7 @@ body{display:flex;align-items:center;justify-content:center;background:#F5F0E8;}
 .burst{position:absolute;}
 .petal{position:absolute;border-radius:50%;animation:petalOut var(--pd,1.4s) ease-out forwards;}
 @keyframes petalOut{0%{transform:translate(0,0);opacity:1;}100%{transform:translate(var(--tx),var(--ty)) scale(.2);opacity:0;}}
-#notes{position:absolute;z-index:10;pointer-events:none;overflow:hidden;top:0;bottom:0;left:33%;right:0;}
+#notes{position:absolute;z-index:10;pointer-events:none;overflow:hidden;top:0;bottom:0;left:420px;right:0;}
 .nc{position:absolute;background:#FFFDF9;border:1px solid rgba(200,165,140,.3);padding:12px 14px;width:280px;max-width:280px;height:420px;overflow:hidden;box-sizing:border-box;box-shadow:0 4px 16px rgba(140,100,70,.12);opacity:0;-webkit-transition:opacity 0.4s ease;transition:opacity 0.4s ease;}
 .nc-foto{width:100%;height:18vw;object-fit:cover;display:block;margin-bottom:.5vw;border-radius:1px;flex-shrink:0;}
 .nc-name{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#5A3518;letter-spacing:.02em;margin-bottom:6px;word-break:break-word;}
@@ -667,7 +671,6 @@ function poll(){
         var data = JSON.parse(xhr.responseText);
         if(!_initialized){
           // İlk yüklemede tüm notları göster
-          if(!window._noteQueue) window._noteQueue = [];
           data.dilekler.forEach(function(d){
             if(typeof spawnNote === 'function') spawnNote(d.isim, d.mesaj, d.foto);
           });
@@ -730,10 +733,10 @@ label{display:block;text-align:left;font-family:'Lato',sans-serif;font-weight:30
 input,textarea{display:block;width:100%;background:transparent;border:none;border-bottom:1.5px solid rgba(200,168,136,.4);font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;font-size:20px;color:#5A3820;padding:10px 4px;outline:none;transition:border-color .3s;margin-bottom:24px;resize:none;-webkit-appearance:none;border-radius:0;}
 input::placeholder,textarea::placeholder{color:rgba(160,120,80,.35);font-style:italic;font-size:18px;}
 input:focus,textarea:focus{border-color:#C8A878;}
-.foto-area{width:100%;aspect-ratio:4/3;border:1.5px dashed rgba(200,168,136,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:24px;overflow:hidden;background:rgba(255,250,244,.6);position:relative;border-radius:2px;}
+.foto-area{width:100%;border:1.5px dashed rgba(200,168,136,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:24px;overflow:hidden;background:rgba(255,250,244,.6);position:relative;border-radius:2px;}
 .foto-hint{font-family:'Lato',sans-serif;font-weight:200;font-size:12px;letter-spacing:.06em;color:rgba(160,120,80,.5);margin-top:8px;text-align:center;}
 .foto-icon{font-size:28px;}
-.foto-preview{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none;}
+.foto-preview{width:100%;height:100%;object-fit:cover;position:absolute;top:0;right:0;bottom:0;left:0;display:none;}
 .btn{display:block;width:100%;padding:16px;background:linear-gradient(135deg,#D4A878,#A87850);border:none;font-family:'Lato',sans-serif;font-weight:300;font-size:14px;letter-spacing:.15em;color:#fff;cursor:pointer;transition:opacity .3s;-webkit-appearance:none;border-radius:0;}
 .btn:active{opacity:.85;}.btn:disabled{opacity:.5;}
 .err{font-family:'Lato',sans-serif;font-size:13px;color:#C07060;margin-top:-16px;margin-bottom:16px;display:none;text-align:left;letter-spacing:.03em;}
@@ -823,6 +826,33 @@ document.getElementById('anotherBtn').addEventListener('click',function(){
   document.getElementById('form').style.display='block';
   btn.disabled=false;btn.textContent='Ekrana Gönder ♡';
 });
+
+// ── EKRANI DOLDUR — AirPlay / TV uyumu ──
+(function(){
+  function scaleToFill(){
+    var c = document.getElementById('canvas');
+    if(!c) return;
+    var ww = window.innerWidth || screen.width;
+    var wh = window.innerHeight || screen.height;
+    var BASE_W = 1280, BASE_H = 720;
+    var sx = ww / BASE_W;
+    var sy = wh / BASE_H;
+    var sc = Math.max(sx, sy);
+    c.style.width  = BASE_W + 'px';
+    c.style.height = BASE_H + 'px';
+    c.style.position = 'fixed';
+    c.style.top    = '50%';
+    c.style.left   = '50%';
+    c.style.webkitTransform = 'translate(-50%,-50%) scale(' + sc + ')';
+    c.style.transform       = 'translate(-50%,-50%) scale(' + sc + ')';
+    c.style.webkitTransformOrigin = 'center center';
+    c.style.transformOrigin       = 'center center';
+  }
+  scaleToFill();
+  window.addEventListener('resize', scaleToFill);
+  // TV'de resize tetiklenmeyebilir, 1s sonra tekrar çalıştır
+  setTimeout(scaleToFill, 1000);
+})();
 </script>
 </body>
 </html>`);
