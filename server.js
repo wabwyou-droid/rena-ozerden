@@ -245,75 +245,89 @@ body{background:#FAF5EE;}
 function esc(str){var d=document.createElement('div');d.textContent=str||'';return d.innerHTML;}
 
 // ── NOT SİSTEMİ ──
+// Her not sabit -NOTE_H-40'dan başlar.
+// _drive timer aralığı = bir nota tam kolon boşluğu kadar yer açar → binme imkansız.
+// 4 kolon round-robin → aynı kolona sıradaki not ancak (NOTE_H+NOTE_GAP)/SPEED ms sonra gelir.
 var NOTE_H   = 420;
 var NOTE_GAP = 30;
 var COLS     = [{left:'1%'},{left:'26%'},{left:'51%'},{left:'76%'}];
 var colIdx   = 0;
-var colNextY = [-NOTE_H-40,-NOTE_H-40,-NOTE_H-40,-NOTE_H-40];
-var SPEED    = 0.055; // px/ms
+var SPEED    = 0.055; // px/ms → ~55px/s → 720px ekranda ~13s
 var seenIds  = {};
 var count    = 0;
 
-// Ana liste — tüm notlar burada, sırayla döner
-var allNotes  = [];
-var playIdx   = 0;  // sıradaki not
-var qRunning  = false;
+var allNotes = []; // ana liste — döngüsel
+var playIdx  = 0;
+var qRunning = false;
+
+// Her kolon için son not zamanı — aynı kolona çok erken not gelmesin
+var colLastLaunch = [0,0,0,0];
 
 function launchNote(isim,mesaj,foto){
-  var ci=colIdx%4; colIdx++;
-  var col=COLS[ci];
-  var startY=colNextY[ci];
-  var el=document.createElement('div'); el.className='nc';
-  el.style.left=col.left; el.style.top=startY+'px'; el.style.opacity='0';
-  var fHtml=foto?'<img class="nc-foto" src="'+foto+'" alt=""/>':'';
-  el.innerHTML=fHtml+'<div class="nc-name">'+esc(isim)+'</div><div class="nc-msg">'+esc(mesaj)+'</div>';
-  var notesEl=document.getElementById('notes');
+  var ci  = colIdx % 4; colIdx++;
+  var col = COLS[ci];
+  colLastLaunch[ci] = Date.now();
+
+  var startY = -NOTE_H - 40; // sabit başlangıç
+  var el = document.createElement('div'); el.className = 'nc';
+  el.style.left = col.left;
+  el.style.top  = startY + 'px';
+  el.style.opacity = '0';
+
+  var fHtml = foto ? '<img class="nc-foto" src="'+foto+'" alt=""/>' : '';
+  el.innerHTML = fHtml +
+    '<div class="nc-name">'+esc(isim)+'</div>'+
+    '<div class="nc-msg">'+esc(mesaj)+'</div>';
+
+  var notesEl = document.getElementById('notes');
   if(!notesEl) return;
   notesEl.appendChild(el);
-  setTimeout(function(){el.style.opacity='1';},80);
-  colNextY[ci]=startY+NOTE_H+NOTE_GAP;
-  var totalTravel=720+NOTE_H+100-startY;
-  var durationMs=totalTravel/SPEED;
-  var t0=null;
+  setTimeout(function(){ el.style.opacity='1'; }, 80);
+
+  var totalTravel = 720 + NOTE_H + 120; // ekrandan tamamen çıkana kadar
+  var durationMs  = totalTravel / SPEED;
+  var t0 = null;
+
   function step(ts){
-    if(!t0) t0=ts;
-    var prog=Math.min(1,(ts-t0)/durationMs);
-    el.style.top=(startY+prog*totalTravel)+'px';
-    if(prog>0.9) el.style.opacity=String(1-(prog-0.9)/0.1);
-    if(prog<1&&el.parentNode){ requestAnimationFrame(step); }
-    else{
-      if(el.parentNode) el.remove();
-      if(colNextY[ci]>800) colNextY[ci]=-NOTE_H-40;
-      // NOT: kuyruğa geri ekleme yok — allNotes listesi döner
-    }
+    if(!t0) t0 = ts;
+    var prog = Math.min(1, (ts-t0) / durationMs);
+    el.style.top = (startY + prog * totalTravel) + 'px';
+    if(prog > 0.9) el.style.opacity = String(1-(prog-0.9)/0.1);
+    if(prog < 1 && el.parentNode){ requestAnimationFrame(step); }
+    else { if(el.parentNode) el.remove(); }
   }
   requestAnimationFrame(step);
 }
 
 function driveQueue(){
   if(qRunning) return;
-  qRunning=true; _drive();
+  qRunning = true;
+  _drive();
 }
+
 function _drive(){
-  if(!allNotes.length){qRunning=false;return;}
-  // Sıradaki notu al (döngüsel)
-  var n=allNotes[playIdx % allNotes.length];
+  if(!allNotes.length){ qRunning=false; return; }
+  var n = allNotes[playIdx % allNotes.length];
   playIdx++;
-  launchNote(n.isim,n.mesaj,n.foto);
-  var waitMs=Math.round((NOTE_H+NOTE_GAP)/SPEED/4);
-  setTimeout(_drive,waitMs);
+  launchNote(n.isim, n.mesaj, n.foto);
+  // Aralık: bir not yüksekliği + boşluk kadar mesafe / hız / 4 kolon
+  // = (420+30) / 0.055 / 4 ≈ 2045ms
+  // Bu sürede önceki not tam 450px ilerler = NOTE_H + NOTE_GAP → sıfır çakışma
+  var waitMs = Math.round((NOTE_H + NOTE_GAP) / SPEED / 4);
+  setTimeout(_drive, waitMs);
 }
 
 function spawnNote(isim,mesaj,foto){
-  allNotes.push({isim:isim,mesaj:mesaj,foto:foto});
+  allNotes.push({isim:isim, mesaj:mesaj, foto:foto});
   count++;
-  var ct=document.getElementById('ct'); if(ct) ct.textContent=count+' not';
-  var canvas=document.getElementById('canvas');
+  var ct = document.getElementById('ct');
+  if(ct) ct.textContent = count + ' not';
+  var canvas = document.getElementById('canvas');
   if(canvas){
-    var t=document.createElement('div'); t.className='toast';
-    t.textContent=esc(isim)+' bir not birakti \u2661';
+    var t = document.createElement('div'); t.className='toast';
+    t.textContent = esc(isim) + ' bir not birakti \u2661';
     canvas.appendChild(t);
-    setTimeout(function(){if(t.parentNode)t.remove();},4000);
+    setTimeout(function(){if(t.parentNode)t.remove();}, 4000);
   }
   if(!qRunning) driveQueue();
 }
@@ -436,7 +450,7 @@ poll();
   function scaleToFill(){
     var c=document.getElementById('canvas'); if(!c) return;
     var ww=window.innerWidth||screen.width, wh=window.innerHeight||screen.height;
-    var sc=Math.max(ww/1280,wh/720);
+    var sc=Math.min(ww/1280,wh/720);
     c.style.webkitTransform='translate(-50%,-50%) scale('+sc+')';
     c.style.transform='translate(-50%,-50%) scale('+sc+')';
     c.style.top='50%'; c.style.left='50%'; c.style.position='fixed';
