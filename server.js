@@ -536,7 +536,7 @@ function launchNote(isim, mesaj, foto) {
   // Ekran yuksekligi - bitirilme mesafesi
   var screenH = window.innerHeight || 800;
   var totalTravel = screenH + NOTE_H + 80 - startY;
-  var speedPxPerMs = 0.45; // px/ms ~ 450px/s
+  var speedPxPerMs = 0.055; // px/ms ~ 55px/s — ~16s for 720px screen
   var durationMs   = totalTravel / speedPxPerMs;
 
   // JS animasyonu - CSS yerine (TV uyumlu)
@@ -584,7 +584,7 @@ function _doDrive(){
   var n = noteQueue.shift();
   launchNote(n.isim, n.mesaj, n.foto);
   // Her not arasi bekleme: bir kart yuksekligi + bosluk kadan suresi / 4 kolon
-  var speedPxPerMs = 0.45;
+  var speedPxPerMs = 0.055;
   var waitMs = Math.round((NOTE_H + NOTE_GAP) / speedPxPerMs / 4);
   _driveTimer = setTimeout(_doDrive, waitMs);
 }
