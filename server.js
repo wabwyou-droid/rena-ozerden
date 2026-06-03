@@ -645,22 +645,50 @@ function spawnNote(isim,mesaj,foto){
   setTimeout(function(){walk();setInterval(walk,6000+Math.random()*3000);},2000);
 })();
 
-// WEBSOCKET
-function esc2(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-function connect(){
-  var proto=location.protocol==='https:'?'wss:':'ws:';
-  var ws=new WebSocket(proto+'//'+location.host);
-  ws.onmessage=function(e){
-    try{
-      var msg=JSON.parse(e.data);
-      if(msg.type==='init'){if(!window._noteQueue)window._noteQueue=[];msg.dilekler.forEach(function(d){if(typeof spawnNote==='function')spawnNote(d.isim,d.mesaj,d.foto);});if(typeof count!=='undefined')count=msg.dilekler.length;var ct=document.getElementById('ct');if(ct)ct.textContent=msg.dilekler.length+' not';}
-      else if(msg.type==='dilek'){if(typeof spawnNote==='function')spawnNote(msg.dilek.isim,msg.dilek.mesaj,msg.dilek.foto);}
-      else if(msg.type==='clear'){var n=document.getElementById('notes');if(n)n.innerHTML='';if(typeof count!=='undefined')count=0;var ct=document.getElementById('ct');if(ct)ct.textContent='0 not';window._noteQueue=[];}
-    }catch(err){console.log('WS:',err);}
+// POLLING — WebSocket yerine (Fire TV uyumlu)
+var _lastId = 0;
+var _initialized = false;
+
+function poll(){
+  var url = '/poll?since=' + (_initialized ? _lastId : 0);
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState === 4 && xhr.status === 200){
+      try{
+        var data = JSON.parse(xhr.responseText);
+        if(!_initialized){
+          // İlk yüklemede tüm notları göster
+          if(!window._noteQueue) window._noteQueue = [];
+          data.dilekler.forEach(function(d){
+            if(typeof spawnNote === 'function') spawnNote(d.isim, d.mesaj, d.foto);
+          });
+          count = data.total;
+          var ct = document.getElementById('ct');
+          if(ct) ct.textContent = count + ' not';
+          _initialized = true;
+        } else {
+          // Yeni notları ekle
+          data.dilekler.forEach(function(d){
+            if(typeof spawnNote === 'function') spawnNote(d.isim, d.mesaj, d.foto);
+            count++;
+            var ct = document.getElementById('ct');
+            if(ct) ct.textContent = count + ' not';
+          });
+        }
+        // En yüksek id'yi güncelle
+        if(data.dilekler.length > 0){
+          data.dilekler.forEach(function(d){
+            if(d.id > _lastId) _lastId = d.id;
+          });
+        }
+      }catch(e){ console.log('poll error:', e); }
+    }
   };
-  ws.onclose=function(){setTimeout(connect,3000);};
+  xhr.send();
+  setTimeout(poll, 3000); // 3 saniyede bir kontrol
 }
-connect();
+poll();
 </script>
 </body>
 </html>`;
@@ -816,6 +844,13 @@ app.post('/admin/clear', async (req, res) => {
 });
 
 app.get('/ping', (req, res) => res.send('ok'));
+
+// Polling endpoint for Fire TV (WebSocket yerine)
+app.get('/poll', (req, res) => {
+  var since = parseInt(req.query.since) || 0;
+  var newItems = dilekler.filter(function(d){ return d.id > since; });
+  res.json({ dilekler: newItems, total: dilekler.length });
+});
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log('\n✨  Rena Özerden\n');
