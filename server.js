@@ -486,109 +486,117 @@ document.getElementById('canvas').addEventListener('click',function(e){
 // NOTES — 4 columns, position-tracked, no overlap
 var count=0;
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-// 4 columns — round-robin + FIXED card height = zero overlap guaranteed
-var FALL_SPEED  = 7.5;   // vh/s
-var CARD_H_PX   = 420;   // matches CSS height:420px
-var GAP_PX      = 20;    // gap between cards in px
-var _colIdx     = 0;     // round-robin index
-var _COLS = [
-  {left:1},
-  {left:26},
-  {left:51},
-  {left:76}
+// ── NOT SISTEMI — sade, TV uyumlu ──
+var NOTE_W = 280;    // px - CSS ile eslesir
+var NOTE_H = 420;    // px - CSS ile eslesir  
+var NOTE_GAP = 24;   // px - notlar arasi bosluk
+var COLS = [
+  {left:'1%'},
+  {left:'26%'},
+  {left:'51%'},
+  {left:'76%'}
 ];
-var _noteQueue = [];
+var colIdx = 0;
+var noteQueue = [];
+var qRunning  = false;
+// Her kolonun bir sonraki notun baslayacagi Y pozisyonu (px)
+var colNextY  = [-NOTE_H - 40, -NOTE_H - 40, -NOTE_H - 40, -NOTE_H - 40];
 
-// Each column independently tracks its next startTop
-var _colTail = [-22, -22, -22, -22]; // current tail position per column (in vh equiv)
+function launchNote(isim, mesaj, foto) {
+  var ci  = colIdx % 4;
+  colIdx++;
+  var col = COLS[ci];
 
-function pxToVh(px){ return px / (window.innerHeight / 100); }
+  var startY = colNextY[ci]; // px - baslangic Y
+  var el = document.createElement('div');
+  el.className = 'nc';
+  el.style.left    = col.left;
+  el.style.top     = startY + 'px';
+  el.style.opacity = '0';
 
-function launchNote(isim, mesaj, foto){
-  // Round-robin: always use next column
-  var colI = _colIdx % 4;
-  _colIdx++;
-  var col = _COLS[colI];
-
-  var cardH = CARD_H_PX;  // card height in vh
-  var gap   = GAP_PX;
-
-  // Place this note right after the tail of this column
-  var startTop = _colTail[colI] + gap;
-
-  // If tail is already below screen, start from just above screen
-  if(startTop > 110) startTop = -cardH - gap;
-
-  var fallDist = 120 - startTop; // travel to exit bottom
-  var fallDur  = fallDist / FALL_SPEED;
-
-  var el = document.createElement('div'); el.className = 'nc';
-  el.style.cssText = 'left:'+col.left+'%;top:'+startTop+'vh;opacity:0;';
-
-  var fHtml = foto ? '<img class="nc-foto" src="'+foto+'" alt=""/>' : '';
+  var fHtml = foto ? '<img class="nc-foto" src="' + foto + '" alt=""/>' : '';
   el.innerHTML = fHtml +
-    '<div class="nc-name">'+esc(isim)+'</div>' +
-    '<div class="nc-msg">'+esc(mesaj)+'</div>';
-  document.getElementById('notes').appendChild(el);
+    '<div class="nc-name">' + esc(isim) + '</div>' +
+    '<div class="nc-msg">'  + esc(mesaj) + '</div>';
 
-  // Update this column's tail
-  _colTail[colI] = startTop + cardH;
+  var notesEl = document.getElementById('notes');
+  if(!notesEl) return;
+  notesEl.appendChild(el);
 
-  // Track tail movement with rAF
-  var launched = Date.now();
-  var initialTail = _colTail[colI];
-  (function tick(){
-    var elapsed = (Date.now() - launched) / 1000;
-    var current = initialTail - FALL_SPEED * elapsed;
-    _colTail[colI] = current;
-    if(current < -cardH - 10) return; // fully gone, stop tracking
-    requestAnimationFrame(tick);
-  })();
+  // Fade in
+  setTimeout(function(){ el.style.opacity = '1'; }, 80);
 
-  // Remove when off screen + requeue
-  setTimeout(function(){
-    if(el.parentNode) el.remove();
-    // Re-queue for infinite loop
-    if(_noteQueue.length < 300) _noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
-    // Eğer kuyruk durmuşsa yeniden başlat
-    if(!_queueRunning && _noteQueue.length) tryQueue();
-  }, fallDur * 1000 + 300);
-}
+  // Bir sonraki notun bu kolondaki baslangic noktasini guncelle
+  colNextY[ci] = startY + NOTE_H + NOTE_GAP;
 
-var _queueRunning = false;
+  // Ekran yuksekligi - bitirilme mesafesi
+  var screenH = window.innerHeight || 800;
+  var totalTravel = screenH + NOTE_H + 80 - startY;
+  var speedPxPerMs = 0.45; // px/ms ~ 450px/s
+  var durationMs   = totalTravel / speedPxPerMs;
 
-function tryQueue(){
-  if(_queueRunning) return; // zaten çalışıyor, çift döngü önle
-  _queueRunning = true;
-  _driveQueue();
-}
-
-function _driveQueue(){
-  if(!_noteQueue.length){
-    _queueRunning = false;
-    return;
+  // JS animasyonu - CSS yerine (TV uyumlu)
+  var t0 = null;
+  function step(ts) {
+    if(!t0) t0 = ts;
+    var elapsed  = ts - t0;
+    var progress = elapsed / durationMs;
+    if(progress > 1) progress = 1;
+    var curY = startY + progress * totalTravel;
+    el.style.top = curY + 'px';
+    // Son %10'da solar
+    if(progress > 0.90) {
+      el.style.opacity = String(1 - (progress - 0.90) / 0.10);
+    }
+    if(progress < 1 && el.parentNode) {
+      requestAnimationFrame(step);
+    } else {
+      if(el.parentNode) el.remove();
+      // kolonu sifirla (tamamen ekran disina cikinca)
+      if(colNextY[ci] > screenH + NOTE_H + 200) colNextY[ci] = -NOTE_H - 40;
+      // yeniden kuyruga ekle
+      if(noteQueue.length < 400) noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
+      if(!qRunning && noteQueue.length) driveQueue();
+    }
   }
-  var n = _noteQueue.shift();
+  requestAnimationFrame(step);
+
+  // colNextY guncelle - bu kolon icin zaman bazli da track et
+  // (ekrana giren notun alti gectikten sonra bir sonraki gelebilir)
+  var clearMs = (NOTE_H + NOTE_GAP) / speedPxPerMs;
+  setTimeout(function(){
+    // Bir sonraki kolona gec - bu kolonun kuyrukta bekleyeni varsa
+  }, clearMs);
+}
+
+var _driveTimer = null;
+function driveQueue(){
+  if(qRunning) return;
+  qRunning = true;
+  _doDrive();
+}
+function _doDrive(){
+  if(!noteQueue.length){ qRunning = false; return; }
+  var n = noteQueue.shift();
   launchNote(n.isim, n.mesaj, n.foto);
-  // Bir sonraki notu ne zaman göndereceğimizi hesapla
-  // 4 kolon round-robin: her kolon için kart yüksekliği + boşluk kadar bekle
-  var cardH  = CARD_H_PX;
-  var gap    = GAP_PX;
-  var waitMs = Math.round(((cardH + gap) / FALL_SPEED) * 1000 / 4);
-  setTimeout(_driveQueue, waitMs);
+  // Her not arasi bekleme: bir kart yuksekligi + bosluk kadan suresi / 4 kolon
+  var speedPxPerMs = 0.45;
+  var waitMs = Math.round((NOTE_H + NOTE_GAP) / speedPxPerMs / 4);
+  _driveTimer = setTimeout(_doDrive, waitMs);
 }
 
 function spawnNote(isim,mesaj,foto){
-  // Yeni not da kuyruğa girer — doğrudan launch OLMAZ
-  _noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
+  noteQueue.push({isim:isim, mesaj:mesaj, foto:foto});
   count++;
   var ct=document.getElementById('ct');if(ct)ct.textContent=count+' not';
-  var t=document.createElement('div');t.className='toast';
-  t.textContent=esc(isim)+' bir not bıraktı ♡';
-  document.getElementById('canvas').appendChild(t);
-  setTimeout(function(){if(t.parentNode)t.remove();},4200);
-  // Kuyruğu tetikle (sadece 1 not varsa başlat, çoksa zaten işleniyor)
-  if(!_queueRunning) tryQueue();
+  var canvas=document.getElementById('canvas');
+  if(canvas){
+    var t=document.createElement('div');t.className='toast';
+    t.textContent=esc(isim)+' bir not birakti';
+    canvas.appendChild(t);
+    setTimeout(function(){if(t.parentNode)t.remove();},4000);
+  }
+  if(!qRunning) driveQueue();
 }
 
 // SPITZ DOG running + paw prints
